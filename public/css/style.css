@@ -1,0 +1,298 @@
+/* ==========================================================================
+   Monolith West - Core Stylesheet (Native, No Frameworks)
+   ========================================================================== */
+
+:root {
+    --clr-primary: #b20838;    /* Monolith Rot */
+    --clr-success: #008752;    /* Monolith Grün */
+    --clr-bg: #fff2da;         /* Monolith Creme */
+    --clr-surface: #ffffff;
+    --clr-text-main: #333333;
+    --clr-text-muted: #666666;
+    
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --radius-none: 0px; 
+}
+
+/* --- 1. Reset & Basis --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Zwingt den Browser global, NIEMALS horizontal zu scrollen */
+html, body { overflow-x: hidden; width: 100%; } 
+
+body {
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    background-color: var(--clr-bg);
+    color: var(--clr-text-main);
+    line-height: 1.6;
+}
+h1, h2, h3 { font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+.container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 var(--space-md); }
+
+/* --- 2. UI Komponenten (Karten & Buttons) --- */
+.card {
+    background: var(--clr-surface); padding: var(--space-lg);
+    border-radius: var(--radius-none); box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
+    margin-bottom: var(--space-lg); border-top: 4px solid var(--clr-primary);
+}
+.btn {
+    display: inline-block; padding: 0.6rem 1.2rem; font-weight: 700; text-align: center; 
+    text-decoration: none; text-transform: uppercase; border: none; cursor: pointer; 
+    transition: 0.2s; font-size: 0.85rem; font-family: inherit;
+}
+.btn-primary { background-color: var(--clr-primary); color: var(--clr-surface); }
+.btn-primary:hover { background-color: #8e062d; }
+.btn-success { background-color: var(--clr-success); color: var(--clr-surface); }
+.btn-success:hover { background-color: #00663e; }
+.btn-warning { background-color: #f39c12; color: #fff; }
+.btn-warning:hover { background-color: #d68910; }
+.btn-outline { background: transparent; border: 2px solid var(--clr-primary); color: var(--clr-primary); }
+.btn-outline:hover { background: var(--clr-primary); color: var(--clr-surface); }
+
+/* --- 3. Tabellen (Desktop Style) --- */
+.table-responsive { overflow-x: auto; width: 100%; }
+.table-monolith { width: 100%; border-collapse: collapse; min-width: 600px; text-align: left; }
+.table-monolith th {
+    background-color: var(--clr-bg); padding: 15px 12px;
+    border-bottom: 3px solid var(--clr-primary);
+    text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px;
+}
+.table-monolith td { padding: 15px 12px; border-bottom: 1px solid #eee; vertical-align: middle; }
+.group-row { background-color: #f9f9f9; font-weight: bold; border-left: 4px solid var(--clr-primary); }
+.total-row { background-color: var(--clr-primary); color: white; font-weight: bold; font-size: 1.1rem; }
+
+/* --- 4. Formulare & Filter --- */
+.filter-bar {
+    background: #fdfdfd; padding: 1.5rem; border-bottom: 1px solid #eee;
+    margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; gap: 1.5rem;
+    align-items: flex-end; border-left: 4px solid var(--clr-primary);
+}
+.filter-group { display: flex; flex-direction: column; gap: 0.4rem; }
+.filter-group label { font-size: 0.85rem; font-weight: 800; text-transform: uppercase; color: var(--clr-text-muted); }
+.filter-group input { padding: 0.6rem; border: 1px solid #ccc; font-family: inherit; outline: none; }
+.filter-group input:focus { border-color: var(--clr-primary); }
+
+/* --- 5. Custom Toggle Switch --- */
+.toggle-wrapper { display: flex; align-items: center; gap: 10px; padding-bottom: 0.4rem; }
+.toggle-switch { position: relative; display: inline-block; width: 46px; height: 24px; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; }
+.slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .3s; }
+input:checked + .slider { background-color: var(--clr-success); }
+input:checked + .slider:before { transform: translateX(22px); }
+
+/* --- 6. Dashboard Layout (Desktop) --- */
+.dashboard-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-lg); margin-bottom: var(--space-lg);
+}
+.stat-card {
+    background: var(--clr-surface); padding: var(--space-lg);
+    border: 1px solid #eee; border-top: 5px solid var(--clr-primary); 
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
+    display: flex; flex-direction: column; justify-content: space-between;
+}
+.stat-card.warning { border-top-color: #f39c12; }
+.stat-card.success { border-top-color: var(--clr-success); }
+.stat-value {
+    font-size: 3rem; font-weight: 800; color: var(--clr-text-main);
+    line-height: 1; margin-bottom: var(--space-sm);
+}
+.stat-label {
+    font-size: 0.85rem; text-transform: uppercase; font-weight: 800;
+    color: var(--clr-text-muted); letter-spacing: 0.5px; margin-bottom: var(--space-md);
+}
+.stat-action { margin-top: auto; }
+.stat-action .btn { width: 100%; }
+
+.admin-stat-grid { display: flex; gap: 15px; flex-wrap: wrap; }
+.admin-stat-card { background: #f9f9f9; padding: 15px; border-left: 3px solid #333; min-width: 150px; flex: 1; }
+.admin-stat-value { font-size: 1.5rem; font-weight: 800; }
+
+/* --- 7. Print Layout (Drucken/PDF) --- */
+.print-signatures { display: none; }
+
+@media print {
+    @page { margin: 1.5cm; }
+    .no-print, .site-header, .filter-bar { display: none !important; }
+    body { background: white; font-size: 10pt; color: #000; }
+    .card { box-shadow: none !important; border: none !important; padding: 0 !important; margin: 0 !important; }
+    
+    .table-monolith { display: table !important; width: 100% !important; border-collapse: collapse !important; }
+    .table-monolith thead { display: table-header-group !important; }
+    .table-monolith tbody { display: table-row-group !important; }
+    .table-monolith tr { display: table-row !important; border: none !important; background: transparent !important; box-shadow: none !important; page-break-inside: avoid; }
+    
+    .table-monolith th, .table-monolith td { 
+        display: table-cell !important; border: 1px solid #000 !important; padding: 8px !important; text-align: left;
+    }
+    /* FIX: Standard print-color-adjust hinzugefügt */
+    .table-monolith th { background-color: #eee !important; color: #000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .table-monolith td::before { display: none !important; } 
+    
+    .group-row td { font-weight: bold; background-color: #f0f0f0 !important; border-top: 2px solid #000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .total-row td { background-color: #ddd !important; font-weight: bold !important; border-top: 2px solid #000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; color: #000 !important; }
+    
+    .print-signatures { display: flex !important; margin-top: 60px; justify-content: space-between; page-break-inside: avoid; }
+    .sig-box { border-top: 1px solid #000; width: 30%; text-align: center; padding-top: 5px; font-size: 0.85rem; font-weight: bold; }
+}
+
+/* --- 8. Navigation (Monolith Style) --- */
+.site-header {
+    background-color: #1a1a1a; border-bottom: 4px solid var(--clr-primary);
+    margin-bottom: var(--space-lg); position: relative; z-index: 100;
+}
+.nav-container {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 var(--space-md); height: 60px;
+}
+.brand-logo { color: var(--clr-surface); text-decoration: none; font-size: 1.2rem; font-weight: 800; letter-spacing: 1px; }
+.brand-logo span { font-weight: 300; color: #aaaaaa; }
+.nav-links { display: flex; gap: 25px; align-items: center; }
+.nav-links a { color: #cccccc; text-decoration: none; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; transition: color 0.2s; }
+.nav-links a:hover { color: var(--clr-surface); }
+.menu-toggle { display: none; }
+
+/* --- 9. Mobile Responsive Layout (Handy Navigation, Tabellen & Dashboard) --- */
+@media (max-width: 900px) {
+    /* Mobile Navigation */
+    .menu-toggle {
+        display: block; background: transparent; border: 1px solid #555;
+        color: var(--clr-surface); padding: 5px 10px; cursor: pointer; font-size: 1.2rem; border-radius: 4px;
+    }
+    .nav-links {
+        display: none; flex-direction: column; position: absolute; top: 60px; left: 0; width: 100%;
+        background-color: #1a1a1a; border-bottom: 4px solid var(--clr-primary); padding: 15px; gap: 15px;
+    }
+    .nav-links.active { display: flex; }
+}
+
+@media screen and (max-width: 768px) {
+    /* Optimierte Abstände und Umbrüche für Headlines */
+    .card { padding: 1rem; }
+    h1, h2, h3 { font-size: 1.3rem; overflow-wrap: normal; hyphens: none; }
+
+    /* --- Mobile Tabellen (Kacheln) --- */
+    .table-responsive { overflow-x: visible; }
+    
+    .table-monolith, .table-monolith tbody, .table-monolith tr, .table-monolith td {
+        display: block; width: 100%; box-sizing: border-box;
+    }
+    .table-monolith { min-width: 0; }
+    .table-monolith thead { display: none; }
+    
+    .table-monolith tr {
+        margin-bottom: var(--space-md); border: 1px solid #eee;
+        border-left: 4px solid var(--clr-primary); background: var(--clr-surface);
+        box-shadow: 4px 4px 0px rgba(0,0,0,0.05); overflow: hidden;
+    }
+    
+    .table-monolith td {
+        display: flex; justify-content: space-between; align-items: flex-start;
+        text-align: right; border-bottom: 1px solid #f4f4f4; padding: 12px 15px; gap: 10px;
+    }
+    .table-monolith td:last-child { border-bottom: none; }
+    
+    .table-monolith td::before {
+        content: attr(data-label); font-size: 0.75rem; font-weight: 800;
+        text-transform: uppercase; color: var(--clr-text-muted); text-align: left;
+        flex-shrink: 0; width: 90px; 
+    }
+
+    .table-monolith td > * {
+        flex-grow: 1; max-width: calc(100% - 100px); overflow-wrap: break-word;
+    }
+
+    .table-monolith td[data-label="Aktion"] {
+        flex-direction: column; align-items: stretch; text-align: center;
+    }
+    .table-monolith td[data-label="Aktion"]::before {
+        align-self: flex-start; margin-bottom: 10px;
+    }
+    
+    .table-monolith td[data-label="Aktion"] > a,
+    .table-monolith td[data-label="Aktion"] > div,
+    .table-monolith td[data-label="Aktion"] > span {
+        display: block; width: 100%; margin: 0 0 8px 0 !important; overflow-wrap: normal;
+    }
+    
+    .table-monolith form { width: 100%; }
+    .table-monolith input[type="text"], .table-monolith input[type="number"] { width: 100% !important; }
+    
+    /* --- Mobile Dashboard --- */
+    .dashboard-grid { gap: var(--space-md); }
+    .stat-card { padding: var(--space-md); }
+    .stat-value { font-size: 2rem; }
+    .stat-label { margin-bottom: 0.8rem; }
+    .admin-stat-grid { gap: 10px; }
+    .admin-stat-card { padding: 10px; min-width: calc(50% - 10px); }
+    .admin-stat-value { font-size: 1.25rem; }
+}
+/* --- 10. Formular-System (Antigravity 2.A) --- */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-lg);
+    align-items: flex-end;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-label {
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--clr-text-muted);
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    outline: none;
+    border-radius: var(--radius-none);
+    font-family: inherit;
+    background: #fff;
+    transition: border-color 0.2s;
+}
+
+.form-control:focus {
+    border-color: var(--clr-primary);
+}
+
+.form-container-light {
+    background: #fdfdfd;
+    padding: 1.5rem;
+    border: 1px solid #eee;
+    border-top: 4px solid var(--clr-success);
+    margin-bottom: 3rem;
+}
+
+.form-section-header {
+    margin-bottom: 2rem;
+}
+
+.text-muted { color: var(--clr-text-muted); font-size: 0.9rem; }
+.text-danger { color: var(--clr-primary); }
+
+/* --- 11. Utilities (Antigravity CSS Cleanup) --- */
+.badge { display: inline-block; padding: 3px 8px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; border-radius: 4px; }
+.badge-light { background: #eee; color: #666; }
+.badge-status { background: #f0f0f0; border: 1px solid #ddd; color: #555; }
+.fw-bold { font-weight: 800; }
+.btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+.d-flex { display: flex; }
+.flex-column { flex-direction: column; }
+.gap-10 { gap: 10px; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-4 { margin-top: 2rem; }
+.mb-4 { margin-bottom: 2rem; }
+.pb-3 { padding-bottom: 1rem; }
+.border-b { border-bottom: 1px solid #ddd; }
+.alert-warning { padding: 1.5rem; background: #fff8e1; border-left: 4px solid #ffc107; font-size: 0.85rem; }
