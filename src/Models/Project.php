@@ -4,10 +4,14 @@ namespace App\Models;
 use App\Database;
 use PDO;
 
+// Diese Klasse verwaltet Projekte: Abrufen, Zuweisen von Benutzern usw.
+// Wie ein Projektordner in einem Büro.
+
 class Project {
     
     /**
      * Holt alle Projekte aus der Datenbank
+     * Wie das Öffnen eines Projektregisters.
      */
     public static function getAll() {
         $db = Database::getConnection();
@@ -17,6 +21,7 @@ class Project {
 
     /**
      * Holt ein einzelnes Projekt anhand seiner ID
+     * Wie das Herausnehmen einer spezifischen Akte.
      */
     public static function getById($id) {
         $db = Database::getConnection();
@@ -27,6 +32,7 @@ class Project {
 
     /**
      * Holt alle Mitarbeiter, die diesem Projekt bereits zugewiesen sind
+     * Wie das Überprüfen der Teamliste für ein Projekt.
      */
     public static function getAssignedUsers($projectId) {
         $db = Database::getConnection();
@@ -43,6 +49,7 @@ class Project {
 
     /**
      * Weist einem Projekt einen User zu (speichert in project_assignments)
+     * Wie das Hinzufügen eines Namens zu einer Projektliste.
      */
     public static function assignUser($projectId, $userId) {
         $db = Database::getConnection();
@@ -59,6 +66,7 @@ class Project {
 
     /**
      * Zählt alle aktiven Projekte für das Dashboard
+     * Wie das Zählen der Ordner in einem Regal.
      */
     public static function getTotalCount() {
         $db = Database::getConnection();
@@ -68,6 +76,7 @@ class Project {
 
     /**
      * Holt alle Projekte, denen ein bestimmter Benutzer zugewiesen ist (Für "Meine Projekte")
+     * Wie das Filtern von Projekten nach dem eigenen Namen.
      */
     public static function getByUserId($userId) {
         $db = Database::getConnection();

@@ -1,7 +1,11 @@
+<!-- Diese Seite zeigt alle wartenden Prämienanträge zur Genehmigung oder Ablehnung.
+Es ist wie ein Schreibtisch mit Papieren, die bearbeitet werden müssen. -->
 <div class="card">
     <h2 style="color: var(--clr-primary); margin-bottom: 5px; text-transform: uppercase;">Wartende Freigaben</h2>
     <p style="margin-bottom: 20px; color: var(--clr-text-muted);">Hier landen alle beantragten Prämien zur Prüfung und Freigabe.</p>
 
+    <!-- Tabelle mit allen wartenden Prämien. -->
+    <!-- Das ist der Stapel auf dem Schreibtisch: Ganz oben liegen die neuesten Anträge. -->
     <div class="table-responsive">
         <table class="table-monolith">
             <thead>
@@ -61,6 +65,8 @@
                                 </span>
                             </td>
                             
+                            <!-- Buttons zum Genehmigen oder Ablehnen der Prämie. -->
+                            <!-- Das sind die beiden Stempel des Chefs: Ein grüner (Freigeben) und ein roter (Ablehnen mit Begründung). -->
                             <td data-label="Aktion" style="text-align: right;">
                                 <?php if (in_array($bonus['current_status_id'], [1, 2])): ?>
                                     <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">

@@ -1,3 +1,5 @@
+<!-- Diese Seite zeigt Details zu einem Projekt und erlaubt das Zuweisen von Mitarbeitern sowie das Beantragen von Prämien.
+Es ist wie ein Projekt-Dashboard, wo man das Team managt und Belohnungen verteilt. -->
 <div class="card">
     <div class="form-section-header">
         <a href="?action=<?php echo ($_SESSION['role_id'] == 4) ? 'my_projects' : 'projects'; ?>" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem; margin-bottom: 1rem;">&larr; ZURÜCK</a>
@@ -13,6 +15,8 @@
         <?php if (in_array($_SESSION['role_id'], [1, 2, 4])): ?>
             <div class="form-container-light" style="margin-bottom: 0;">
                 <h3 class="form-section-title">Mitarbeiter zuweisen</h3>
+                <!-- Formular, um einen Mitarbeiter ins Boot zu holen. -->
+                <!-- Das ist so, als würde man jemanden zur WhatsApp-Gruppe des Projekts hinzufügen. -->
                 <form method="POST" action="?action=assign_user">
                     <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                     <input type="hidden" name="project_id" value="<?php echo $project['id']; ?>">
@@ -35,6 +39,8 @@
 
         <div>
             <h3 class="form-section-title" style="border-bottom: 2px solid #eee; padding-bottom: 0.5rem;">Projekt-Team</h3>
+            <!-- Liste aller Personen, die bereits an diesem Projekt arbeiten. -->
+            <!-- Hier kann der Vorgesetzte jedem direkt einen "Bonus-Antrag" in den Briefkasten werfen. -->
             <div style="display: flex; flex-direction: column; gap: 1rem;">
                 <?php foreach ($assignedUsers as $au): ?>
                     <div style="border: 1px solid #eee; border-left: 4px solid var(--clr-primary); padding: 1rem; background: var(--clr-surface);">

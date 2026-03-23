@@ -5,6 +5,9 @@ use App\Database;
 use App\Config; // NEU: Nutzt den zentralen Config-Helfer
 use Exception;
 
+// Diese Klasse arbeitet als "Kurier" zwischen unserem System und dem externen Projekt-Manager (ClickUp).
+// Wie ein Bote, der regelmäßig beim Partner-Unternehmen vorbeifährt, Dokumente abholt und sie in unserem internen Lager einsortiert.
+
 class ClickUpImport {
     
     private $apiToken;
@@ -12,20 +15,21 @@ class ClickUpImport {
     private $baseUrl = 'https://api.clickup.com/api/v2';
 
     /**
-     * Konstruktor: Lädt die API-Daten sicher über die Config-Klasse (.env)
+     * Konstruktor: Lädt die sicheren Zugangsdaten aus dem versteckten Tresor (.env Datei).
+     * Wie das Übergeben eines geheimen Sicherheitspasses an unseren Kurier, damit er beim Partner-Unternehmen eingelassen wird.
      */
     public function __construct() {
         /**
-         * SICHERHEITS-UPGRADE (Antigravity 1.C):
-         * Wir löschen das 'require' der config.php und ziehen die Daten
-         * stattdessen sicher aus den Umgebungsvariablen.
+         * Wir schreiben keine Passwörter mehr direkt auf Post-It Zettel in den Code,
+         * sondern rufen sie sicher über den Konfigurations-Bot ("Config::get") ab.
          */
         $this->apiToken = Config::get('CLICKUP_TOKEN');
         $this->listId = Config::get('CLICKUP_LIST_ID');
     }
 
     /**
-     * Holt die Tasks (Projekte) von ClickUp und speichert sie in der Datenbank
+     * Fährt zu ClickUp, holt die aktuellen Projekte und räumt sie in unsere Datenbank ein.
+     * Wie das Entladen eines Lieferwagens am Morgen: Neue Kartons werden eingeräumt, bereits vorhandene werden anhand ihrer Paketnummer aktualisiert.
      */
     public function syncProjects() {
         // Sicherstellen, dass die Zugangsdaten überhaupt da sind
@@ -34,6 +38,7 @@ class ClickUpImport {
         }
 
         // 1. Daten von der API holen
+        // Wie das Anrufen eines Freundes, um Informationen zu bekommen.
         $url = $this->baseUrl . '/list/' . $this->listId . '/task?subtasks=false';
         
         $ch = curl_init();
@@ -56,6 +61,7 @@ class ClickUpImport {
         $tasks = $data['tasks'] ?? [];
 
         // 2. Daten in die Datenbank schreiben
+        // Wie das Abspeichern der heruntergeladenen Dateien in einen Ordner.
         $db = Database::getConnection();
         $syncedCount = 0;
 

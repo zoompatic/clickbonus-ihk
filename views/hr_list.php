@@ -1,12 +1,17 @@
+<!-- Diese Seite zeigt alle genehmigten Prämien für die HR-Abteilung zur Auszahlung.
+Es ist wie eine Gehaltsliste, die zur Buchhaltung geht. -->
 <div class="card">
     <div class="no-print" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
         <div>
             <h2 style="color: var(--clr-primary); margin-bottom: 5px;">HR-Auszahlungsliste</h2>
             <span style="color: var(--clr-text-muted); font-size: 0.9rem;">Final genehmigte Prämien für die Buchhaltung</span>
         </div>
+        <!-- Button zum Drucken der Liste. -->
         <button onclick="window.print();" class="btn btn-outline" style="color: #333; border-color: #333;">🖨️ Drucken / PDF</button>
     </div>
 
+    <!-- Filter für Datum und Gruppierung. -->
+    <!-- Wie die Sortierknöpfe in einer Registrierkasse: "Zeige mir nur den Mai" oder "Fasse alle Beträge pro Person zusammen". -->
     <form method="GET" action="index.php" class="filter-bar no-print">
         <input type="hidden" name="action" value="hr_list">
         
@@ -32,6 +37,8 @@
         </div>
     </form>
 
+    <!-- Tabelle mit den genehmigten Prämien. -->
+    <!-- Das finale Kassenbuch: Hier stehen nur Beträge, die zuvor zwingend vom Chef durchgewinkt (Grün) wurden. -->
     <div class="table-responsive">
         <table class="table-monolith">
             <thead>
@@ -82,6 +89,7 @@
                         <?php endforeach; ?>
                     <?php endif; ?>
 
+                    <!-- Gesamtsumme am Ende. -->
                     <tr class="total-row">
                         <td colspan="2" style="text-align: right; padding: 15px;">GESAMTAUSZAHLUNG:</td>
                         <td style="text-align: right; padding: 15px;"><?php echo number_format($grandTotal, 2, ',', '.'); ?> €</td>
@@ -98,6 +106,7 @@
         </table>
     </div>
 
+    <!-- Unterschriftsfelder für den Druck. -->
     <div class="print-signatures">
         <div class="sig-box">Erstellt (System / <?php echo date('d.m.Y'); ?>)</div>
         <div class="sig-box">Geprüft (Personalabteilung)</div>

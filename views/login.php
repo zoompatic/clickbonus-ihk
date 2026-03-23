@@ -1,12 +1,16 @@
+<!-- Diese Seite zeigt das Anmeldeformular an.
+Es ist wie ein Türschild mit einem Schloss: Man gibt E-Mail und Passwort ein, um reinzukommen. -->
 <div class="card" style="max-width: 400px; margin: 50px auto; text-align: center;">
     <h2>Login</h2>
     
+    <!-- Zeigt Fehlermeldungen an, falls das Login fehlgeschlägt ist. -->
     <?php if (!empty($error)): ?>
         <div style="background: #ffdddd; color: #d8000c; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
             <?php echo htmlspecialchars($error); ?>
         </div>
     <?php endif; ?>
 
+    <!-- Das Formular sendet E-Mail und Passwort an den Server. -->
     <form method="POST" action="?action=login" style="text-align: left;">
         <div style="margin-bottom: 15px;">
             <label for="email">E-Mail Adresse:</label><br>

@@ -6,6 +6,7 @@ use PDO;
 
 /**
  * Hilfsklasse für Status-Konstanten (Löst Magic Numbers Problem)
+ * Wie Etiketten für verschiedene Zustände.
  */
 class Status {
     const DRAFT = 1;
@@ -17,7 +18,8 @@ class Status {
 class Bonus {
 
     /**
-     * Erstellt eine neue Prämie und setzt den Initialstatus auf 'PENDING'.
+     * Erstellt eine neue Prämie und setzt den Startstatus auf 'PENDING' (Wartend).
+     * Wie das Ausfüllen eines Antragsformulars und das Einwerfen in den Briefkasten des Chefs.
      */
     public static function create($assignmentId, $amount, $comment, $creatorUserId) {
         $db = Database::getConnection();
@@ -25,6 +27,7 @@ class Bonus {
             $db->beginTransaction();
 
             // SQL Injection Schutz: Prepared Statements
+            // Wie ein strenger Türsteher, der keine unerlaubten Zeichen oder Befehle in die Akte eintragen lässt.
             $stmt = $db->prepare("INSERT INTO bonuses (project_assignment_id, amount, comment, created_by) VALUES (?, ?, ?, ?)");
             $stmt->execute([$assignmentId, $amount, $comment, $creatorUserId]);
             $bonusId = $db->lastInsertId();
@@ -44,6 +47,7 @@ class Bonus {
 
     /**
      * Holt Prämien für eine Zuweisung unter Nutzung der SQL-View.
+     * Wie das Nachschlagen von Anträgen für ein bestimmtes Projekt.
      */
     public static function getForAssignment($assignmentId) {
         $db = Database::getConnection();
@@ -59,6 +63,7 @@ class Bonus {
 
     /**
      * Holt alle wartenden Prämien (DRAFT oder PENDING).
+     * Wie ein Posteingangskorb auf dem Schreibtisch, in dem sämtliche noch nicht genehmigten Unterlagen liegen.
      */
     public static function getAllWithDetails() {
         $db = Database::getConnection();
@@ -82,7 +87,8 @@ class Bonus {
     }
 
     /**
-     * Holt alle vollständig genehmigten Boni für die HR-Liste.
+     * Holt ausschließlich die vollständig genehmigten Boni für die Auszahlung (HR-Liste).
+     * Wie der Gang zum Buchhalter, der nur die Akten mit dem grünen "Genehmigt"-Stempel akzeptiert.
      */
     public static function getFullyApproved($limitToUserId = null, $startDate = null, $endDate = null) {
         $db = Database::getConnection();
@@ -119,6 +125,7 @@ class Bonus {
 
     /**
      * Verarbeitet die Genehmigung oder Ablehnung.
+     * Wie das Stempeln eines Antrags mit "Genehmigt" oder "Abgelehnt".
      */
     public static function processApproval($bonusId, $userId, $isApproved, $comment = '') {
         $db = Database::getConnection();
