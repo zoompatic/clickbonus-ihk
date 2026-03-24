@@ -146,6 +146,11 @@ if ($roleId === Role::HR && !in_array($action, ['hr_list', 'logout'])) {
     exit;
 }
 
+if ($action === 'hr_list' && !in_array($roleId, [Role::IT_MANAGER, Role::HR])) {
+    header("Location: index.php");
+    exit;
+}
+
 // --- AKTIONEN (Speichern in der Datenbank) ---
 // Diese Blöcke verarbeiten Formulare und speichern Daten in der Datenbank.
 // Sync: Holt neue Projekte von ClickUp.
