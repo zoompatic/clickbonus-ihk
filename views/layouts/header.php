@@ -9,6 +9,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ClickBonus | Monolith West</title>
+    <link rel="icon" href="favicon.png" type="image/png">
+
     
     <link rel="stylesheet" href="css/style.css?v=<?php echo time(); ?>">
 </head>
@@ -31,34 +33,39 @@
                 
                 <?php if ($roleId === 1): ?>
                     <a href="?action=projects">Projekte</a>
-                <?php endif; ?>
+                <?php
+    endif; ?>
 
                 <?php if ($roleId === 2): ?>
                     <a href="?action=my_projects">Projekte</a>
-                <?php endif; ?>
+                <?php
+    endif; ?>
 
                 <?php if (in_array($roleId, [1, 2])): ?>
                     <a href="?action=bonuses">Freigaben</a>
-                <?php endif; ?>
+                <?php
+    endif; ?>
 
                 <?php if (in_array($roleId, [1, 3])): ?>
                     <a href="?action=hr_list">HR-Liste</a>
-                <?php endif; ?>
+                <?php
+    endif; ?>
 
 
                 
-<?php 
-                    // Bestimme den Anzeigenamen (Vorname) und die Rolle
-                    $displayName = $_SESSION['first_name'] ?? explode(' ', $_SESSION['user_name'] ?? '')[0];
-                    $displayRole = $_SESSION['role_name'] ?? 'User';
-                ?>
+<?php
+    // Bestimme den Anzeigenamen (Vorname) und die Rolle
+    $displayName = $_SESSION['first_name'] ?? explode(' ', $_SESSION['user_name'] ?? '')[0];
+    $displayRole = $_SESSION['role_name'] ?? 'User';
+?>
                 
                 <!-- Logout-Link mit Benutzerinfo. -->
                 <a href="?action=logout" style="color: #ffcccc; border-left: 1px solid #444; padding-left: 15px; margin-left: 5px;">
                     Logout (<?php echo htmlspecialchars($displayName); ?> | <small><?php echo htmlspecialchars($displayRole); ?></small>)
                 </a>
             </nav>
-        <?php endif; ?>
+        <?php
+endif; ?>
     </div>
 </header>   
 
@@ -76,18 +83,23 @@
             }
         });
     </script>
-<?php endif; ?>
+<?php
+endif; ?>
 
 <main class="container" style="padding-top: 2rem; padding-bottom: 2rem;">
     
     <!-- Zeigt Erfolgs- oder Fehlermeldungen an. -->
     <?php if (isset($_SESSION['error_msg'])): ?>
         <div class="alert alert-error">
-            ❌ <?php echo htmlspecialchars($_SESSION['error_msg']); unset($_SESSION['error_msg']); ?>
+            ❌ <?php echo htmlspecialchars($_SESSION['error_msg']);
+    unset($_SESSION['error_msg']); ?>
         </div>
-    <?php endif; ?>
+    <?php
+endif; ?>
     <?php if (isset($_SESSION['success_msg'])): ?>
         <div class="alert alert-success">
-            ✅ <?php echo htmlspecialchars($_SESSION['success_msg']); unset($_SESSION['success_msg']); ?>
+            ✅ <?php echo htmlspecialchars($_SESSION['success_msg']);
+    unset($_SESSION['success_msg']); ?>
         </div>
-    <?php endif; ?>
+    <?php
+endif; ?>
