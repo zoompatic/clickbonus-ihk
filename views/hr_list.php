@@ -1,115 +1,105 @@
 <!-- Diese Seite zeigt alle genehmigten Prämien für die HR-Abteilung zur Auszahlung.
 Es ist wie eine Gehaltsliste, die zur Buchhaltung geht. -->
-<div class="card">
-    <div class="no-print" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-        <div>
-            <h2 style="color: var(--clr-primary); margin-bottom: 5px;">HR-Auszahlungsliste</h2>
-            <span style="color: var(--clr-text-muted); font-size: 0.9rem;">Final genehmigte Prämien für die Buchhaltung</span>
-        </div>
-        <!-- Button zum Drucken der Liste. -->
-        <button onclick="window.print();" class="btn btn-outline" style="color: #333; border-color: #333;">🖨️ Drucken / PDF</button>
-    </div>
-
-    <!-- Filter für Datum und Gruppierung. -->
-    <!-- Wie die Sortierknöpfe in einer Registrierkasse: "Zeige mir nur den Mai" oder "Fasse alle Beträge pro Person zusammen". -->
-    <form method="GET" action="index.php" class="filter-bar no-print">
-        <input type="hidden" name="action" value="hr_list">
+<div class="card bg-white border-top border-primary border-4 p-2 mb-4">
+    <div class="card-body p-4">
         
-        <div class="filter-group">
-            <label>Von Datum:</label>
-            <input type="date" name="start_date" value="<?php echo htmlspecialchars($_GET['start_date'] ?? ''); ?>" onchange="this.form.submit()">
-        </div>
-        
-        <div class="filter-group">
-            <label>Bis Datum:</label>
-            <input type="date" name="end_date" value="<?php echo htmlspecialchars($_GET['end_date'] ?? ''); ?>" onchange="this.form.submit()">
-        </div>
-
-        <div class="filter-group" style="margin-left: auto;">
-            <label>Ansicht</label>
-            <div class="toggle-wrapper">
-                <span style="font-size: 0.85rem; font-weight: bold;">Nach Mitarbeiter gruppieren</span>
-                <label class="toggle-switch">
-                    <input type="checkbox" name="group_by_employee" value="1" <?php echo (isset($_GET['group_by_employee']) && $_GET['group_by_employee'] == '1') ? 'checked' : ''; ?> onchange="this.form.submit()">
-                    <span class="slider"></span>
-                </label>
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3 d-print-none">
+            <div>
+                <h2 class="text-primary mb-1 text-uppercase fw-bold">HR-Auszahlungsliste</h2>
+                <span class="text-muted small">Final genehmigte Prämien für die Buchhaltung</span>
             </div>
+            <button onclick="window.print();" class="btn btn-outline-dark fw-bold text-uppercase">🖨️ Drucken / PDF</button>
         </div>
-    </form>
 
-    <!-- Tabelle mit den genehmigten Prämien. -->
-    <!-- Das finale Kassenbuch: Hier stehen nur Beträge, die zuvor zwingend vom Chef durchgewinkt (Grün) wurden. -->
-    <div class="table-responsive">
-        <table class="table-monolith">
-            <thead>
-                <tr>
-                    <th>Zahlungsempfänger / Projekt</th>
-                    <th>Datum</th>
-                    <th style="text-align: right;">Betrag</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php 
-                $grandTotal = 0;
-                if (!empty($bonuses)): 
-                    // --- GRUPPIERTE ANSICHT ---
-                    if (isset($_GET['group_by_employee']) && $_GET['group_by_employee'] == '1'):
-                        foreach ($bonuses as $name => $data): 
-                            $grandTotal += $data['total']; ?>
-                            <tr class="group-row">
-                                <td colspan="2">👤 <?php echo htmlspecialchars($name); ?></td>
-                                <td style="text-align: right; font-size: 1.1rem; font-weight: bold;">
-                                    <?php echo number_format($data['total'], 2, ',', '.'); ?> €
-                                </td>
-                            </tr>
-                            <?php foreach ($data['items'] as $item): ?>
-                                <tr style="font-size: 0.9rem;">
-                                    <td style="padding-left: 30px;">└ <?php echo htmlspecialchars($item['project_name']); ?></td>
-                                    <td><?php echo date('d.m.Y', strtotime($item['created_at'])); ?></td>
-                                    <td style="text-align: right;"><?php echo number_format($item['amount'], 2, ',', '.'); ?> €</td>
+        <form method="GET" action="index.php" class="row g-3 align-items-end mb-4 pb-4 border-bottom d-print-none">
+            <input type="hidden" name="action" value="hr_list">
+            
+            <div class="col-12 col-md-auto">
+                <label class="form-label text-muted small text-uppercase fw-bold mb-1">Von Datum:</label>
+                <input type="date" class="form-control" name="start_date" value="<?php echo htmlspecialchars($_GET['start_date'] ?? ''); ?>" onchange="this.form.submit()">
+            </div>
+            
+            <div class="col-12 col-md-auto">
+                <label class="form-label text-muted small text-uppercase fw-bold mb-1">Bis Datum:</label>
+                <input type="date" class="form-control" name="end_date" value="<?php echo htmlspecialchars($_GET['end_date'] ?? ''); ?>" onchange="this.form.submit()">
+            </div>
+
+            <div class="col-12 col-md-auto ms-md-auto">
+                <div class="form-check form-switch form-check-switch border p-2 rounded-0 px-3 ps-5 bg-light">
+                    <input class="form-check-input" type="checkbox" role="switch" id="groupSwitch" name="group_by_employee" value="1" <?php echo (isset($_GET['group_by_employee']) && $_GET['group_by_employee'] == '1') ? 'checked' : ''; ?> onchange="this.form.submit()">
+                    <label class="form-check-label fw-bold small text-uppercase ms-2" for="groupSwitch">Nach Mitarbeiter gruppieren</label>
+                </div>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle m-0">
+                <thead>
+                    <tr>
+                        <th>Zahlungsempfänger / Projekt</th>
+                        <th>Datum</th>
+                        <th class="text-end">Betrag</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php 
+                    $grandTotal = 0;
+                    if (!empty($bonuses)): 
+                        if (isset($_GET['group_by_employee']) && $_GET['group_by_employee'] == '1'):
+                            foreach ($bonuses as $name => $data): 
+                                $grandTotal += $data['total']; ?>
+                                <tr class="table-secondary border-dark">
+                                    <td colspan="2" class="fw-bold fs-6">👤 <?php echo htmlspecialchars($name); ?></td>
+                                    <td class="text-end fs-5 fw-bold text-nowrap">
+                                        <?php echo number_format($data['total'], 2, ',', '.'); ?> €
+                                    </td>
+                                </tr>
+                                <?php foreach ($data['items'] as $item): ?>
+                                    <tr>
+                                        <td class="ps-4 text-muted small">└ <?php echo htmlspecialchars($item['project_name']); ?></td>
+                                        <td class="text-muted small"><?php echo date('d.m.Y', strtotime($item['created_at'])); ?></td>
+                                        <td class="text-end text-muted"><?php echo number_format($item['amount'], 2, ',', '.'); ?> €</td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endforeach; ?>
+
+                        <?php else: 
+                            foreach ($bonuses as $b): 
+                                $grandTotal += $b['amount']; ?>
+                                <tr>
+                                    <td>
+                                        <strong><?php echo htmlspecialchars($b['last_name'] . ', ' . $b['first_name']); ?></strong><br>
+                                        <span class="text-muted small"><?php echo htmlspecialchars($b['project_name']); ?></span>
+                                    </td>
+                                    <td class="text-muted small"><?php echo date('d.m.Y', strtotime($b['created_at'])); ?></td>
+                                    <td class="text-end fw-bold text-nowrap">
+                                        <?php echo number_format($b['amount'], 2, ',', '.'); ?> €
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
-                        <?php endforeach; ?>
+                        <?php endif; ?>
 
-                    <?php 
-                    // --- NORMALE LISTE (Chronologisch) ---
-                    else: 
-                        foreach ($bonuses as $b): 
-                            $grandTotal += $b['amount']; ?>
-                            <tr>
-                                <td>
-                                    <strong><?php echo htmlspecialchars($b['last_name'] . ', ' . $b['first_name']); ?></strong><br>
-                                    <span style="font-size: 0.85rem;"><?php echo htmlspecialchars($b['project_name']); ?></span>
-                                </td>
-                                <td><?php echo date('d.m.Y', strtotime($b['created_at'])); ?></td>
-                                <td style="text-align: right; font-weight: bold;">
-                                    <?php echo number_format($b['amount'], 2, ',', '.'); ?> €
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
+                        <tr class="table-dark">
+                            <td colspan="2" class="text-end fw-bold py-3">GESAMTAUSZAHLUNG:</td>
+                            <td class="text-end fw-bold py-3 fs-5 text-nowrap"><?php echo number_format($grandTotal, 2, ',', '.'); ?> €</td>
+                        </tr>
+
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="3" class="text-center p-5 text-muted">
+                                Keine final genehmigten Prämien im gewählten Zeitraum gefunden.
+                            </td>
+                        </tr>
                     <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
 
-                    <!-- Gesamtsumme am Ende. -->
-                    <tr class="total-row">
-                        <td colspan="2" style="text-align: right; padding: 15px;">GESAMTAUSZAHLUNG:</td>
-                        <td style="text-align: right; padding: 15px;"><?php echo number_format($grandTotal, 2, ',', '.'); ?> €</td>
-                    </tr>
+        <div class="print-signatures d-none d-print-flex">
+            <div class="sig-box">Erstellt (System / <?php echo date('d.m.Y'); ?>)</div>
+            <div class="sig-box">Geprüft (Personalabteilung)</div>
+            <div class="sig-box">Freigabe (Buchhaltung)</div>
+        </div>
 
-                <?php else: ?>
-                    <tr>
-                        <td colspan="3" style="text-align: center; padding: 40px; color: #888;">
-                            Keine final genehmigten Prämien im gewählten Zeitraum gefunden.
-                        </td>
-                    </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Unterschriftsfelder für den Druck. -->
-    <div class="print-signatures">
-        <div class="sig-box">Erstellt (System / <?php echo date('d.m.Y'); ?>)</div>
-        <div class="sig-box">Geprüft (Personalabteilung)</div>
-        <div class="sig-box">Freigabe (Buchhaltung)</div>
     </div>
 </div>

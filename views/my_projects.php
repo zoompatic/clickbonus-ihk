@@ -1,60 +1,59 @@
 <!-- Diese Seite zeigt die Projekte, denen der eingeloggte Benutzer zugewiesen ist.
 Es ist wie eine persönliche Projektliste. -->
-<div class="card">
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
-        <div>
-            <h2 style="color: var(--clr-primary); margin-bottom: 5px;">Meine Projekte</h2>
-            <span style="color: var(--clr-text-muted); font-size: 0.9rem;">Hier siehst du alle Projekte, die dir zugewiesen wurden.</span>
+<div class="card bg-white border-top border-primary border-4 p-2 mb-4">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+            <div>
+                <h2 class="text-primary mb-1 text-uppercase fw-bold">Meine Projekte</h2>
+                <span class="text-muted small">Hier siehst du alle Projekte, die dir zugewiesen wurden.</span>
+            </div>
         </div>
-    </div>
 
-    <!-- Tabelle mit den zugewiesenen Projekten. -->
-    <!-- Wie dein persönlicher Schreibtisch: Hier liegen nur die Akten, für die du auch zuständig bist. -->
-    <div class="table-responsive">
-        <table class="table-monolith">
-            <thead>
-                <tr>
-                    <th>ClickUp ID</th>
-                    <th>Projektname</th>
-                    <th>Status</th>
-                    <th>Letzter Sync</th>
-                    <th style="text-align: right;">Aktion</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (!empty($projects)): ?>
-                    <?php foreach ($projects as $project): ?>
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle m-0">
+                <thead>
+                    <tr>
+                        <th>ClickUp ID</th>
+                        <th>Projektname</th>
+                        <th>Status</th>
+                        <th>Letzter Sync</th>
+                        <th class="text-end">Aktion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($projects)): ?>
+                        <?php foreach ($projects as $project): ?>
+                            <tr>
+                                <td class="text-muted small">
+                                    <strong>#<?php echo htmlspecialchars($project['clickup_task_id']); ?></strong>
+                                </td>
+                                <td>
+                                    <strong><?php echo htmlspecialchars($project['name']); ?></strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary border-start border-3 border-dark text-uppercase">
+                                        <?php echo htmlspecialchars($project['clickup_status']); ?>
+                                    </span>
+                                </td>
+                                <td class="text-muted small">
+                                    <?php echo date('d.m.Y H:i', strtotime($project['last_sync_at'])); ?>
+                                </td>
+                                <td class="text-end">
+                                    <a href="?action=assign&project_id=<?php echo $project['id']; ?>" class="btn btn-primary btn-sm fw-bold">
+                                        Detail / Prämien
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
                         <tr>
-                            <td data-label="ClickUp ID" style="color: var(--clr-text-muted); font-size: 0.9rem;">
-                                <strong>#<?php echo htmlspecialchars($project['clickup_task_id']); ?></strong>
-                            </td>
-                            <td data-label="Projektname">
-                                <strong><?php echo htmlspecialchars($project['name']); ?></strong>
-                            </td>
-                            <td data-label="Status">
-                                <span style="background: var(--clr-bg); padding: 4px 8px; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; border-left: 3px solid #ccc; white-space: nowrap;">
-                                    <?php echo htmlspecialchars($project['clickup_status']); ?>
-                                </span>
-                            </td>
-                            <td data-label="Letzter Sync" style="font-size: 0.85rem; color: var(--clr-text-muted);">
-                                <?php echo date('d.m.Y H:i', strtotime($project['last_sync_at'])); ?>
-                            </td>
-                            <td data-label="Aktion" style="text-align: right;">
-                                <!-- Link zur Detailansicht des Projekts. -->
-                                <a href="?action=assign&project_id=<?php echo $project['id']; ?>" class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;">
-                                    Detail / Prämien
-                                </a>
+                            <td colspan="5" class="p-5 text-center text-muted">
+                                Keine Projekte zugewiesen.
                             </td>
                         </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="5" style="padding: 40px; text-align: center; color: var(--clr-text-muted);">
-                            Keine Projekte zugewiesen.
-                        </td>
-                    </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

@@ -1,25 +1,29 @@
 <!-- Diese Seite zeigt das Anmeldeformular an.
 Es ist wie ein Türschild mit einem Schloss: Man gibt E-Mail und Passwort ein, um reinzukommen. -->
-<div class="card" style="max-width: 400px; margin: 50px auto; text-align: center;">
-    <h2>Login</h2>
-    
-    <!-- Zeigt Fehlermeldungen an, falls das Login fehlgeschlägt ist. -->
-    <?php if (!empty($error)): ?>
-        <div style="background: #ffdddd; color: #d8000c; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
-            <?php echo htmlspecialchars($error); ?>
-        </div>
-    <?php endif; ?>
+<div class="row justify-content-center mt-5">
+    <div class="col-12 col-md-6 col-lg-4">
+        <div class="card bg-white border-top border-primary border-4 p-3">
+            <div class="card-body">
+                <h3 class="text-center mb-4 text-uppercase fw-bold text-dark">Login</h3>
+                
+                <?php if (!empty($error)): ?>
+                    <div class="alert alert-danger rounded-0 border-0 text-center" role="alert">
+                        <?php echo htmlspecialchars($error); ?>
+                    </div>
+                <?php endif; ?>
 
-    <!-- Das Formular sendet E-Mail und Passwort an den Server. -->
-    <form method="POST" action="?action=login" style="text-align: left;">
-        <div style="margin-bottom: 15px;">
-            <label for="email">E-Mail Adresse:</label><br>
-            <input type="email" id="email" name="email" required style="width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box;">
+                <form method="POST" action="?action=login">
+                    <div class="mb-3">
+                        <label for="email" class="form-label text-muted small">E-Mail Adresse:</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="password" class="form-label text-muted small">Passwort:</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-login w-100 text-uppercase fw-bold text-white">Einloggen</button>
+                </form>
+            </div>
         </div>
-        <div style="margin-bottom: 20px;">
-            <label for="password">Passwort:</label><br>
-            <input type="password" id="password" name="password" required style="width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box;">
-        </div>
-        <button type="submit" style="width: 100%; padding: 10px; background: #2c3e50; color: white; border: none; cursor: pointer; font-size: 16px;">Einloggen</button>
-    </form>
+    </div>
 </div>
