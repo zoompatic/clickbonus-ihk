@@ -1,7 +1,7 @@
 # Ignoriere echte Zugangsdaten
 config/config.php
 
-# Ignoriere temporäre Dateien von Windows/macOS
+# Ignoriere temporäre Dateien
 .DS_Store
 Thumbs.db
 .env
