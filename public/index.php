@@ -68,9 +68,9 @@ use App\Models\Project;
 use App\Models\Bonus;
 
 try {
-    $db = Database::getConnection();
-} catch (Exception $e) {
-    error_log("DB Fehler: " . $e->getMessage());
+    $database = Database::getConnection();
+} catch (Exception $error) {
+    error_log("DB Fehler: " . $error->getMessage());
     die("Kritischer Fehler: Datenbankverbindung fehlgeschlagen.");
 }
 
@@ -215,8 +215,8 @@ switch ($action) {
         // Wie ein Chef, der sich die Personalakte eines Teams auf den Schreibtisch legt, um Boni zu verteilen.
         $project = Project::getById($_GET['project_id']);
         $assignedUsers = Project::getAssignedUsers($_GET['project_id']);
-        foreach ($assignedUsers as $key => $au) {
-            $assignedUsers[$key]['bonuses'] = Bonus::getForAssignment($au['assignment_id']);
+        foreach ($assignedUsers as $key => $assignedEmployee) {
+            $assignedUsers[$key]['bonuses'] = Bonus::getForAssignment($assignedEmployee['assignment_id']);
         }
         $allUsers = User::getAllActive();
         require_once __DIR__ . '/../views/assign.php';
@@ -230,17 +230,17 @@ switch ($action) {
     case 'hr_list':
         // Hier landet nur das, was zu 100% abgesegnet ist, bereit für die Auszahlung.
         // Wenn "nach Mitarbeiter gruppieren" gedrückt wird, rechnen wir alle Einzelbeträge einer Person zusammen.
-        $bonuses = Bonus::getFullyApproved(null, $_GET['start_date'] ?? null, $_GET['end_date'] ?? null);
+        $allBonuses = Bonus::getFullyApproved(null, $_GET['start_date'] ?? null, $_GET['end_date'] ?? null);
         if (isset($_GET['group_by_employee']) && $_GET['group_by_employee'] == '1') {
-            $grouped = [];
-            foreach ($bonuses as $b) {
+            $groupedBonuses = [];
+            foreach ($allBonuses as $bonus) {
                 // Name als Etikett
-                $name = $b['last_name'] . ', ' . $b['first_name'];
+                $name = $bonus['last_name'] . ', ' . $bonus['first_name'];
                 // Beträge in den gemeinsamen Topf werfen
-                $grouped[$name]['total'] = ($grouped[$name]['total'] ?? 0) + $b['amount'];
-                $grouped[$name]['items'][] = $b;
+                $groupedBonuses[$name]['total'] = ($groupedBonuses[$name]['total'] ?? 0) + $bonus['amount'];
+                $groupedBonuses[$name]['items'][] = $bonus;
             }
-            $bonuses = $grouped;
+            $allBonuses = $groupedBonuses;
         }
         require_once __DIR__ . '/../views/hr_list.php';
         break;

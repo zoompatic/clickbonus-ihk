@@ -45,16 +45,16 @@
                 </thead>
                 <tbody>
                     <?php
-if (!empty($bonuses)):
+if (!empty($allBonuses)):
     if (isset($_GET['group_by_employee']) && $_GET['group_by_employee'] == '1'):
-        foreach ($bonuses as $name => $data): ?>
+        foreach ($allBonuses as $name => $dataPackage): ?>
                                 <tr class="table-secondary border-dark">
                                     <td colspan="2" class="fw-bold fs-6">👤 <?php echo htmlspecialchars($name); ?></td>
                                     <td class="text-end fs-5 fw-bold text-nowrap">
-                                        <?php echo number_format($data['total'], 2, ',', '.'); ?> €
+                                        <?php echo number_format($dataPackage['total'], 2, ',', '.'); ?> €
                                     </td>
                                 </tr>
-                                <?php foreach ($data['items'] as $item): ?>
+                                <?php foreach ($dataPackage['items'] as $item): ?>
                                     <tr>
                                         <td class="ps-4 text-muted small">└ <?php echo htmlspecialchars($item['project_name']); ?></td>
                                         <td class="text-muted small"><?php echo date('d.m.Y', strtotime($item['created_at'])); ?></td>
@@ -67,15 +67,15 @@ if (!empty($bonuses)):
 
                         <?php
     else:
-        foreach ($bonuses as $b): ?>
+        foreach ($allBonuses as $bonus): ?>
                                 <tr>
                                     <td>
-                                        <strong><?php echo htmlspecialchars($b['last_name'] . ', ' . $b['first_name']); ?></strong><br>
-                                        <span class="text-muted small"><?php echo htmlspecialchars($b['project_name']); ?></span>
+                                        <strong><?php echo htmlspecialchars($bonus['last_name'] . ', ' . $bonus['first_name']); ?></strong><br>
+                                        <span class="text-muted small"><?php echo htmlspecialchars($bonus['project_name']); ?></span>
                                     </td>
-                                    <td class="text-muted small"><?php echo date('d.m.Y', strtotime($b['created_at'])); ?></td>
+                                    <td class="text-muted small"><?php echo date('d.m.Y', strtotime($bonus['created_at'])); ?></td>
                                     <td class="text-end fw-bold text-nowrap">
-                                        <?php echo number_format($b['amount'], 2, ',', '.'); ?> €
+                                        <?php echo number_format($bonus['amount'], 2, ',', '.'); ?> €
                                     </td>
                                 </tr>
                             <?php

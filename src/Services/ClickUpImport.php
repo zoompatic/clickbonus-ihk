@@ -33,27 +33,27 @@ class ClickUpImport
         // Projektdaten von der API abrufen.
         $url = $this->baseUrl . '/list/' . $this->listId . '/task?subtasks=false';
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        $curlHandle = curl_init();
+        curl_setopt($curlHandle, CURLOPT_URL, $url);
+        curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curlHandle, CURLOPT_HTTPHEADER, [
             "Authorization: " . $this->apiToken,
             "Content-Type: application/json"
         ]);
 
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+        $response = curl_exec($curlHandle);
+        $httpCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
+        curl_close($curlHandle);
 
         if ($httpCode !== 200) {
             throw new Exception("Fehler beim Abrufen der ClickUp-Daten. HTTP-Code: " . $httpCode . " (Bitte API-Token in der .env prüfen)");
         }
 
-        $data = json_decode($response, true);
-        $tasks = $data['tasks'] ?? [];
+        $dataPackage = json_decode($response, true);
+        $tasks = $dataPackage['tasks'] ?? [];
 
         // Projektdaten in die Datenbank schreiben.
-        $db = Database::getConnection();
+        $database = Database::getConnection();
         $syncedCount = 0;
 
         foreach ($tasks as $task) {
@@ -62,7 +62,7 @@ class ClickUpImport
             $status = $task['status']['status'] ?? 'unknown';
             $description = $task['description'] ?? '';
 
-            $stmt = $db->prepare("
+            $statement = $database->prepare("
                 INSERT INTO projects (clickup_task_id, clickup_status, name, description, last_sync_at) 
                 VALUES (?, ?, ?, ?, NOW())
                 ON DUPLICATE KEY UPDATE 
@@ -72,7 +72,7 @@ class ClickUpImport
                 last_sync_at = NOW()
             ");
 
-            $stmt->execute([$clickupId, $status, $name, $description]);
+            $statement->execute([$clickupId, $status, $name, $description]);
             $syncedCount++;
         }
 

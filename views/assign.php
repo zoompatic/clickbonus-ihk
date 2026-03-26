@@ -52,16 +52,16 @@ endif; ?>
                         <div class="text-muted p-3 bg-light rounded">Noch keine Mitarbeiter zugewiesen.</div>
                     <?php
 endif; ?>
-                    <?php foreach ($assignedUsers as $au): ?>
+                    <?php foreach ($assignedUsers as $assignedEmployee): ?>
                         <div class="card shadow-sm border-start border-primary border-4 bg-light">
                             <div class="card-body p-3">
                                 <div class="mb-3">
-                                    <strong class="fs-6">👤 <?php echo htmlspecialchars($au['first_name'] . ' ' . $au['last_name']); ?></strong>
+                                    <strong class="fs-6">👤 <?php echo htmlspecialchars($assignedEmployee['first_name'] . ' ' . $assignedEmployee['last_name']); ?></strong>
                                 </div>
                                 
                                 <form method="POST" action="?action=store_bonus" class="d-flex gap-2 flex-wrap align-items-end">
                                     <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
-                                    <input type="hidden" name="assignment_id" value="<?php echo $au['assignment_id']; ?>">
+                                    <input type="hidden" name="assignment_id" value="<?php echo $assignedEmployee['assignment_id']; ?>">
                                     <input type="hidden" name="project_id" value="<?php echo $project['id']; ?>">
                                     
                                     <div style="width: 120px;">

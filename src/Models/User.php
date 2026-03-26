@@ -13,15 +13,15 @@ class User
     // Prüfung, ob die Eingaben korrekt sind und ob der Benutzer die richtige Rolle hat.
     public static function authenticate($email, $password)
     {
-        $db = Database::getConnection();
-        $stmt = $db->prepare("
+        $database = Database::getConnection();
+        $statement = $database->prepare("
             SELECT u.id, u.role_id, u.first_name, u.last_name, u.email, u.password, r.role_name 
             FROM users u 
             JOIN roles r ON u.role_id = r.id
             WHERE u.email = ? AND u.deleted_at IS NULL
         ");
-        $stmt->execute([$email]);
-        $user = $stmt->fetch();
+        $statement->execute([$email]);
+        $user = $statement->fetch();
 
         // Prüfung der Berechtigung: Nur Manager und HR können sich anmelden.
         if ($user && (strtolower($user['role_name']) === 'mitarbeiter' || (int)$user['role_id'] === 4)) {
@@ -39,15 +39,15 @@ class User
     // Holt alle aktiven Benutzer aus der Datenbank.
     public static function getAllActive()
     {
-        $db = Database::getConnection();
-        $stmt = $db->query("
+        $database = Database::getConnection();
+        $statement = $database->query("
             SELECT u.id, u.first_name, u.last_name, u.email, u.role_id, r.role_name 
             FROM users u
             JOIN roles r ON u.role_id = r.id
             WHERE u.deleted_at IS NULL
             ORDER BY u.last_name ASC
         ");
-        return $stmt->fetchAll();
+        return $statement->fetchAll();
     }
 
 

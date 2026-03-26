@@ -21,24 +21,24 @@ class Bonus
     // Erstellt eine neue Prämie und setzt den Startstatus auf 'PENDING'
     public static function create($assignmentId, $amount, $comment, $creatorUserId)
     {
-        $db = Database::getConnection();
+        $database = Database::getConnection();
         try {
-            $db->beginTransaction();
+            $database->beginTransaction();
 
             // SQL Injection Schutz durch Prepared Statements
-            $stmt = $db->prepare("INSERT INTO bonuses (project_assignment_id, amount, comment, created_by) VALUES (?, ?, ?, ?)");
-            $stmt->execute([$assignmentId, $amount, $comment, $creatorUserId]);
-            $bonusId = $db->lastInsertId();
+            $statement = $database->prepare("INSERT INTO bonuses (project_assignment_id, amount, comment, created_by) VALUES (?, ?, ?, ?)");
+            $statement->execute([$assignmentId, $amount, $comment, $creatorUserId]);
+            $bonusId = $database->lastInsertId();
 
-            $stmtApp = $db->prepare("INSERT INTO approvals (bonus_id, user_id, approval_status_id, comment) VALUES (?, ?, ?, ?)");
-            $stmtApp->execute([$bonusId, $creatorUserId, Status::PENDING, "Prämie beantragt"]);
+            $approvalStatement = $database->prepare("INSERT INTO approvals (bonus_id, user_id, approval_status_id, comment) VALUES (?, ?, ?, ?)");
+            $approvalStatement->execute([$bonusId, $creatorUserId, Status::PENDING, "Prämie beantragt"]);
 
-            $db->commit();
+            $database->commit();
             return true;
         }
-        catch (\Exception $e) {
-            $db->rollBack();
-            error_log("Fehler beim Erstellen der Prämie: " . $e->getMessage());
+        catch (\Exception $error) {
+            $database->rollBack();
+            error_log("Fehler beim Erstellen der Prämie: " . $error->getMessage());
             return false;
         }
     }
@@ -46,21 +46,21 @@ class Bonus
     // Abholung einer Prämie für eine Zuweisung unter Nutzung der SQL-View.
     public static function getForAssignment($assignmentId)
     {
-        $db = Database::getConnection();
-        $stmt = $db->prepare("
+        $database = Database::getConnection();
+        $statement = $database->prepare("
             SELECT b.*, v.current_status 
             FROM bonuses b
             JOIN view_bonus_status v ON b.id = v.bonus_id
             WHERE b.project_assignment_id = ? AND b.deleted_at IS NULL
         ");
-        $stmt->execute([$assignmentId]);
-        return $stmt->fetchAll();
+        $statement->execute([$assignmentId]);
+        return $statement->fetchAll();
     }
 
     // Abholung aller Prämien mit Status DRAFT oder PENDING.
     public static function getAllWithDetails()
     {
-        $db = Database::getConnection();
+        $database = Database::getConnection();
         $sql = "
             SELECT b.id as bonus_id, b.amount, b.comment, b.created_at,
                    u.first_name, u.last_name, p.name as project_name,
@@ -76,13 +76,13 @@ class Bonus
             AND v.current_status_id IN (" . Status::DRAFT . ", " . Status::PENDING . ")
             ORDER BY b.created_at DESC
         ";
-        return $db->query($sql)->fetchAll();
+        return $database->query($sql)->fetchAll();
     }
 
     // Abholung aller Prämien mit Status APPROVED.
     public static function getFullyApproved($limitToUserId = null, $startDate = null, $endDate = null)
     {
-        $db = Database::getConnection();
+        $database = Database::getConnection();
 
         $sql = "SELECT b.*, u.first_name, u.last_name, p.name as project_name, v.last_update as approved_at
                 FROM bonuses b 
@@ -106,9 +106,9 @@ class Bonus
             $params['ed'] = $endDate . " 23:59:59";
         }
 
-        $stmt = $db->prepare($sql . " ORDER BY v.last_update DESC");
-        $stmt->execute($params);
-        return $stmt->fetchAll();
+        $statement = $database->prepare($sql . " ORDER BY v.last_update DESC");
+        $statement->execute($params);
+        return $statement->fetchAll();
     }
 
 
@@ -116,12 +116,12 @@ class Bonus
     // Verarbeitung der Genehmigung oder Ablehnung.  
     public static function processApproval($bonusId, $userId, $isApproved, $comment = '')
     {
-        $db = Database::getConnection();
+        $database = Database::getConnection();
 
         $statusId = $isApproved ?Status::APPROVED : Status::REJECTED;
 
-        $stmt = $db->prepare("INSERT INTO approvals (bonus_id, user_id, approval_status_id, comment) VALUES (?, ?, ?, ?)");
-        return $stmt->execute([$bonusId, $userId, $statusId, $comment]);
+        $statement = $database->prepare("INSERT INTO approvals (bonus_id, user_id, approval_status_id, comment) VALUES (?, ?, ?, ?)");
+        return $statement->execute([$bonusId, $userId, $statusId, $comment]);
     }
 
 
