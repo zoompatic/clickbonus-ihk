@@ -1,5 +1,7 @@
-<!-- Diese Seite zeigt alle importierten Projekte in einer Tabelle an.
-Es ist wie ein Projektkatalog, wo man alle laufenden Arbeiten sieht. -->
+<?php
+// views/projects.php
+// Diese Seite zeigt alle importierten Projekte in einer Tabelle an.
+?>
 <div class="card bg-white border-top border-primary border-4 p-2 mb-4">
     <div class="card-body p-4">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
@@ -45,14 +47,17 @@ Es ist wie ein Projektkatalog, wo man alle laufenden Arbeiten sieht. -->
                                     </a>
                                 </td>
                             </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
+                        <?php
+    endforeach; ?>
+                    <?php
+else: ?>
                         <tr>
                             <td colspan="5" class="p-5 text-center text-muted">
                                 Keine Projekte gefunden. Bitte synchronisiere ClickUp!
                             </td>
                         </tr>
-                    <?php endif; ?>
+                    <?php
+endif; ?>
                 </tbody>
             </table>
         </div>

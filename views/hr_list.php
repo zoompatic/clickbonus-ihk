@@ -1,5 +1,7 @@
-<!-- Diese Seite zeigt alle genehmigten Prämien für die HR-Abteilung zur Auszahlung.
-Es ist wie eine Gehaltsliste, die zur Buchhaltung geht. -->
+<?php
+// views/hr_list.php
+// Diese Seite zeigt alle genehmigten Prämien für die HR-Abteilung zur Auszahlung.
+?>
 <div class="card bg-white border-top border-primary border-4 p-2 mb-4">
     <div class="card-body p-4">
         
@@ -26,7 +28,7 @@ Es ist wie eine Gehaltsliste, die zur Buchhaltung geht. -->
 
             <div class="col-12 col-md-auto ms-md-auto">
                 <div class="form-check form-switch form-check-switch border p-2 rounded-0 px-3 ps-5 bg-light">
-                    <input class="form-check-input" type="checkbox" role="switch" id="groupSwitch" name="group_by_employee" value="1" <?php echo (isset($_GET['group_by_employee']) && $_GET['group_by_employee'] == '1') ? 'checked' : ''; ?> onchange="this.form.submit()">
+                    <input class="form-check-input" type="checkbox" role="switch" id="groupSwitch" name="group_by_employee" value="1" <?php echo(isset($_GET['group_by_employee']) && $_GET['group_by_employee'] == '1') ? 'checked' : ''; ?> onchange="this.form.submit()">
                     <label class="form-check-label fw-bold small text-uppercase ms-2" for="groupSwitch">Nach Mitarbeiter gruppieren</label>
                 </div>
             </div>
@@ -42,10 +44,10 @@ Es ist wie eine Gehaltsliste, die zur Buchhaltung geht. -->
                     </tr>
                 </thead>
                 <tbody>
-                    <?php 
-                    if (!empty($bonuses)): 
-                        if (isset($_GET['group_by_employee']) && $_GET['group_by_employee'] == '1'):
-                            foreach ($bonuses as $name => $data): ?>
+                    <?php
+if (!empty($bonuses)):
+    if (isset($_GET['group_by_employee']) && $_GET['group_by_employee'] == '1'):
+        foreach ($bonuses as $name => $data): ?>
                                 <tr class="table-secondary border-dark">
                                     <td colspan="2" class="fw-bold fs-6">👤 <?php echo htmlspecialchars($name); ?></td>
                                     <td class="text-end fs-5 fw-bold text-nowrap">
@@ -58,11 +60,14 @@ Es ist wie eine Gehaltsliste, die zur Buchhaltung geht. -->
                                         <td class="text-muted small"><?php echo date('d.m.Y', strtotime($item['created_at'])); ?></td>
                                         <td class="text-end text-muted"><?php echo number_format($item['amount'], 2, ',', '.'); ?> €</td>
                                     </tr>
-                                <?php endforeach; ?>
-                            <?php endforeach; ?>
+                                <?php
+            endforeach; ?>
+                            <?php
+        endforeach; ?>
 
-                        <?php else: 
-                            foreach ($bonuses as $b): ?>
+                        <?php
+    else:
+        foreach ($bonuses as $b): ?>
                                 <tr>
                                     <td>
                                         <strong><?php echo htmlspecialchars($b['last_name'] . ', ' . $b['first_name']); ?></strong><br>
@@ -73,18 +78,22 @@ Es ist wie eine Gehaltsliste, die zur Buchhaltung geht. -->
                                         <?php echo number_format($b['amount'], 2, ',', '.'); ?> €
                                     </td>
                                 </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+                            <?php
+        endforeach; ?>
+                        <?php
+    endif; ?>
 
 
 
-                    <?php else: ?>
+                    <?php
+else: ?>
                         <tr>
                             <td colspan="3" class="text-center p-5 text-muted">
                                 Keine final genehmigten Prämien im gewählten Zeitraum gefunden.
                             </td>
                         </tr>
-                    <?php endif; ?>
+                    <?php
+endif; ?>
                 </tbody>
             </table>
         </div>

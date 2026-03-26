@@ -1,9 +1,12 @@
-<!-- Diese Seite zeigt Details zu einem Projekt und erlaubt das Zuweisen von Mitarbeitern sowie das Beantragen von Prämien.
-Es ist wie ein Projekt-Dashboard, wo man das Team managt und Belohnungen verteilt. -->
+<?php
+
+// views/assign.php 
+// Diese Seite zeigt Details zu einem Projekt und erlaubt das Zuweisen von Mitarbeitern sowie das Beantragen von Prämien.
+?>
 <div class="card shadow-sm mb-4 border-top border-primary border-4">
     <div class="card-body p-4">
         <div class="mb-4">
-            <a href="?action=<?php echo ($_SESSION['role_id'] == 4) ? 'my_projects' : 'projects'; ?>" class="btn btn-outline-secondary btn-sm mb-3">&larr; ZURÜCK</a>
+            <a href="?action=<?php echo($_SESSION['role_id'] == 4) ? 'my_projects' : 'projects'; ?>" class="btn btn-outline-secondary btn-sm mb-3">&larr; ZURÜCK</a>
             <h1 class="text-primary mb-2 text-uppercase fw-bold">Projekt: <?php echo htmlspecialchars($project['name']); ?></h1>
             <div class="d-flex gap-4 text-muted">
                 <span><strong>Status:</strong> <?php echo htmlspecialchars($project['clickup_status']); ?></span>
@@ -30,7 +33,8 @@ Es ist wie ein Projekt-Dashboard, wo man das Team managt und Belohnungen verteil
                                             <option value="<?php echo $user['id']; ?>">
                                                 <?php echo htmlspecialchars($user['last_name'] . ', ' . $user['first_name']); ?>
                                             </option>
-                                        <?php endforeach; ?>
+                                        <?php
+    endforeach; ?>
                                     </select>
                                 </div>
                                 <button type="submit" class="btn btn-success fw-bold w-100">+ ZUWEISEN</button>
@@ -38,14 +42,16 @@ Es ist wie ein Projekt-Dashboard, wo man das Team managt und Belohnungen verteil
                         </div>
                     </div>
                 </div>
-            <?php endif; ?>
+            <?php
+endif; ?>
 
             <div class="col-12 col-lg-7">
                 <h3 class="h5 mb-3 text-uppercase fw-bold border-bottom pb-2">Projekt-Team</h3>
                 <div class="d-flex flex-column gap-3">
                     <?php if (empty($assignedUsers)): ?>
                         <div class="text-muted p-3 bg-light rounded">Noch keine Mitarbeiter zugewiesen.</div>
-                    <?php endif; ?>
+                    <?php
+endif; ?>
                     <?php foreach ($assignedUsers as $au): ?>
                         <div class="card shadow-sm border-start border-primary border-4 bg-light">
                             <div class="card-body p-3">
@@ -68,7 +74,8 @@ Es ist wie ein Projekt-Dashboard, wo man das Team managt und Belohnungen verteil
                                 </form>
                             </div>
                         </div>
-                    <?php endforeach; ?>
+                    <?php
+endforeach; ?>
                 </div>
             </div>
         </div>

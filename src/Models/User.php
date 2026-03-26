@@ -1,17 +1,18 @@
 <?php
+// src/Models/User.php
 namespace App\Models;
 
 use App\Database;
 use PDO;
 
-// Diese Klasse handhabt alles rund um Benutzer, wie Anmeldung und Datenabruf.
-// Wie ein Personalverzeichnis in einem Unternehmen.
+// Diese Klasse verwaltet Benutzer, Anmeldung und Datenabruf.
+class User
+{
 
-class User {
-    
-    // Authentifiziert einen Benutzer mit E-Mail und Passwort.
-    // Prüft, ob die Eingaben korrekt sind und ob der Benutzer die richtige Rolle hat.
-    public static function authenticate($email, $password) {
+    // Authentifizierung eines Benutzers mit E-Mail und Passwort.
+    // Prüfung, ob die Eingaben korrekt sind und ob der Benutzer die richtige Rolle hat.
+    public static function authenticate($email, $password)
+    {
         $db = Database::getConnection();
         $stmt = $db->prepare("
             SELECT u.id, u.role_id, u.first_name, u.last_name, u.email, u.password, r.role_name 
@@ -22,14 +23,12 @@ class User {
         $stmt->execute([$email]);
         $user = $stmt->fetch();
 
-        // 1. BARRIERE: Mitarbeiter dürfen sich nicht einloggen!
-        // Nur Manager und HR können sich anmelden.
+        // Prüfung der Berechtigung: Nur Manager und HR können sich anmelden.
         if ($user && (strtolower($user['role_name']) === 'mitarbeiter' || (int)$user['role_id'] === 4)) {
             return false;
         }
 
-        // 2. BARRIERE: Nur wenn ein Passwort in der DB existiert und es übereinstimmt, geht es weiter
-        // Wie das Überprüfen eines Schlosses mit dem richtigen Schlüssel.
+        // Prüfung ob ein Passwort existiert und mit dem Hash übereinstimmt.
         if ($user && !empty($user['password']) && password_verify($password, $user['password'])) {
             unset($user['password']); // Passwort aus dem Ergebnis entfernen, aus Sicherheitsgründen.
             return $user;
@@ -38,8 +37,8 @@ class User {
     }
 
     // Holt alle aktiven Benutzer aus der Datenbank.
-    // Wie das Durchblättern eines Adressbuchs.
-    public static function getAllActive() {
+    public static function getAllActive()
+    {
         $db = Database::getConnection();
         $stmt = $db->query("
             SELECT u.id, u.first_name, u.last_name, u.email, u.role_id, r.role_name 

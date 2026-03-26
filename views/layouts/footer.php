@@ -1,7 +1,6 @@
 <?php
 // views/layouts/footer.php
-// Dies ist der bauliche Abschluss der Webseite (das "Fundament").
-// Wie der hintere Buchdeckel sorgt es dafür, dass alles sauber abgeschlossen wird.
+// Dies ist der bauliche Abschluss der Webseite.
 ?>
 </main>
     <!-- Bootstrap 5 JS Bundle (with Popper) -->

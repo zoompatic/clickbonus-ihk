@@ -1,5 +1,7 @@
-<!-- Diese Seite zeigt die Projekte, denen der eingeloggte Benutzer zugewiesen ist.
-Es ist wie eine persönliche Projektliste. -->
+<?php
+// views/my_projects.php
+// Diese Seite zeigt die Projekte, denen der eingeloggte Benutzer zugewiesen ist.
+?>
 <div class="card bg-white border-top border-primary border-4 p-2 mb-4">
     <div class="card-body p-4">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
@@ -44,14 +46,17 @@ Es ist wie eine persönliche Projektliste. -->
                                     </a>
                                 </td>
                             </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
+                        <?php
+    endforeach; ?>
+                    <?php
+else: ?>
                         <tr>
                             <td colspan="5" class="p-5 text-center text-muted">
                                 Keine Projekte zugewiesen.
                             </td>
                         </tr>
-                    <?php endif; ?>
+                    <?php
+endif; ?>
                 </tbody>
             </table>
         </div>

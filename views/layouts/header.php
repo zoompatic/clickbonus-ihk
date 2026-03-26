@@ -1,7 +1,6 @@
 <?php
 // views/layouts/header.php
 // Dies ist der obere Teil jeder Seite: Logo, Navigation und Meldungen.
-// Wie der Kopf einer Webseite mit Menü und Benachrichtigungen.
 ?>
 <!DOCTYPE html>
 <html lang="de">

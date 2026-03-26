@@ -1,46 +1,38 @@
 <?php
+// src/Services/ClickUpImport.php
 namespace App\Services;
 
 use App\Database;
 use App\Config; // NEU: Nutzt den zentralen Config-Helfer
 use Exception;
 
-// Diese Klasse arbeitet als "Kurier" zwischen unserem System und dem externen Projekt-Manager (ClickUp).
-// Wie ein Bote, der regelmäßig beim Partner-Unternehmen vorbeifährt, Dokumente abholt und sie in unserem internen Lager einsortiert.
+// Diese Klasse dient als Schnittstelle zwischen diesem System und ClickUp.
+class ClickUpImport
+{
 
-class ClickUpImport {
-    
     private $apiToken;
     private $listId;
     private $baseUrl = 'https://api.clickup.com/api/v2';
 
-    /**
-     * Konstruktor: Lädt die sicheren Zugangsdaten aus dem versteckten Tresor (.env Datei).
-     * Wie das Übergeben eines geheimen Sicherheitspasses an unseren Kurier, damit er beim Partner-Unternehmen eingelassen wird.
-     */
-    public function __construct() {
-        /**
-         * Wir schreiben keine Passwörter mehr direkt auf Post-It Zettel in den Code,
-         * sondern rufen sie sicher über den Konfigurations-Bot ("Config::get") ab.
-         */
+    // Konstruktor: Lädt die Zugangsdaten aus der .env Datei.
+    public function __construct()
+    {
+        // Abrufen der Zugangsdaten über die Config-Klasse.
         $this->apiToken = Config::get('CLICKUP_TOKEN');
         $this->listId = Config::get('CLICKUP_LIST_ID');
     }
 
-    /**
-     * Fährt zu ClickUp, holt die aktuellen Projekte und räumt sie in unsere Datenbank ein.
-     * Wie das Entladen eines Lieferwagens am Morgen: Neue Kartons werden eingeräumt, bereits vorhandene werden anhand ihrer Paketnummer aktualisiert.
-     */
-    public function syncProjects() {
+    // Ruft Projektdaten von ClickUp ab und speichert diese in der Datenbank.
+    public function syncProjects()
+    {
         // Sicherstellen, dass die Zugangsdaten überhaupt da sind
         if (!$this->apiToken || !$this->listId) {
             throw new Exception("Synchronisation nicht möglich: API-Token oder List-ID fehlen in der .env Datei.");
         }
 
-        // 1. Daten von der API holen
-        // Wie das Anrufen eines Freundes, um Informationen zu bekommen.
+        // Projektdaten von der API abrufen.
         $url = $this->baseUrl . '/list/' . $this->listId . '/task?subtasks=false';
-        
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -48,7 +40,7 @@ class ClickUpImport {
             "Authorization: " . $this->apiToken,
             "Content-Type: application/json"
         ]);
-        
+
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
@@ -60,8 +52,7 @@ class ClickUpImport {
         $data = json_decode($response, true);
         $tasks = $data['tasks'] ?? [];
 
-        // 2. Daten in die Datenbank schreiben
-        // Wie das Abspeichern der heruntergeladenen Dateien in einen Ordner.
+        // Projektdaten in die Datenbank schreiben.
         $db = Database::getConnection();
         $syncedCount = 0;
 
@@ -80,7 +71,7 @@ class ClickUpImport {
                 description = VALUES(description),
                 last_sync_at = NOW()
             ");
-            
+
             $stmt->execute([$clickupId, $status, $name, $description]);
             $syncedCount++;
         }

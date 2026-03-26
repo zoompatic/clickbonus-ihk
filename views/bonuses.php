@@ -1,5 +1,6 @@
-<!-- Diese Seite zeigt alle wartenden Prämienanträge zur Genehmigung oder Ablehnung.
-Es ist wie ein Schreibtisch mit Papieren, die bearbeitet werden müssen. -->
+<?php // views/bonuses.php 
+// Diese Seite zeigt alle wartenden Prämienanträge zur Genehmigung oder Ablehnung.
+?>
 <div class="card bg-white border-top border-primary border-4 p-2 mb-4">
     <div class="card-body p-4">
         <h2 class="text-primary mb-1 text-uppercase fw-bold">Wartende Freigaben</h2>
@@ -41,19 +42,23 @@ Es ist wie ein Schreibtisch mit Papieren, die bearbeitet werden müssen. -->
                                 <td class="small">
                                     <?php if ($bonus['comment']): ?>
                                         <span class="text-muted fst-italic"><?php echo htmlspecialchars($bonus['comment']); ?></span>
-                                    <?php else: ?>
+                                    <?php
+        else: ?>
                                         <span class="text-muted">-</span>
-                                    <?php endif; ?>
+                                    <?php
+        endif; ?>
                                 </td>
                                 <td class="text-end fw-bold fs-5 text-nowrap">
                                     <?php echo number_format($bonus['amount'], 2, ',', '.'); ?> €
                                 </td>
                                 <td class="text-end">
-                                    <?php 
-                                        $badgeClass = 'bg-secondary';
-                                        if ($bonus['current_status_id'] == 1) $badgeClass = 'bg-warning text-dark';
-                                        if ($bonus['current_status_id'] == 2) $badgeClass = 'bg-info text-dark';
-                                    ?>
+                                    <?php
+        $badgeClass = 'bg-secondary';
+        if ($bonus['current_status_id'] == 1)
+            $badgeClass = 'bg-warning text-dark';
+        if ($bonus['current_status_id'] == 2)
+            $badgeClass = 'bg-info text-dark';
+?>
                                     <span class="badge <?php echo $badgeClass; ?> text-uppercase rounded-1 px-2 py-1">
                                         <?php echo htmlspecialchars($bonus['current_status']); ?>
                                     </span>
@@ -78,17 +83,22 @@ Es ist wie ein Schreibtisch mit Papieren, die bearbeitet werden müssen. -->
                                             </div>
                                         </form>
                                         </div>
-                                    <?php else: ?>
+                                    <?php
+        else: ?>
                                         <span class="text-muted small fw-bold text-uppercase">Abgeschlossen</span>
-                                    <?php endif; ?>
+                                    <?php
+        endif; ?>
                                 </td>
                             </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
+                        <?php
+    endforeach; ?>
+                    <?php
+else: ?>
                         <tr>
                             <td colspan="8" class="p-5 text-center text-muted">Es liegen aktuell keine Freigabe-Anträge vor.</td>
                         </tr>
-                    <?php endif; ?>
+                    <?php
+endif; ?>
                 </tbody>
             </table>
         </div>

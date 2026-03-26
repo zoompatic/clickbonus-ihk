@@ -1,5 +1,7 @@
-<!-- Diese Seite zeigt das Anmeldeformular an.
-Es ist wie ein Türschild mit einem Schloss: Man gibt E-Mail und Passwort ein, um reinzukommen. -->
+<?php
+// views/login.php
+// Diese Seite zeigt das Anmeldeformular an.
+?>
 <div class="row justify-content-center mt-5">
     <div class="col-12 col-md-6 col-lg-4">
         <div class="card bg-white border-top border-primary border-4 p-3">
@@ -10,7 +12,8 @@ Es ist wie ein Türschild mit einem Schloss: Man gibt E-Mail und Passwort ein, u
                     <div class="alert alert-danger rounded-0 border-0 text-center" role="alert">
                         <?php echo htmlspecialchars($error); ?>
                     </div>
-                <?php endif; ?>
+                <?php
+endif; ?>
 
                 <form method="POST" action="?action=login">
                     <div class="mb-3">
