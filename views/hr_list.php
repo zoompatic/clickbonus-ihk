@@ -43,11 +43,9 @@ Es ist wie eine Gehaltsliste, die zur Buchhaltung geht. -->
                 </thead>
                 <tbody>
                     <?php 
-                    $grandTotal = 0;
                     if (!empty($bonuses)): 
                         if (isset($_GET['group_by_employee']) && $_GET['group_by_employee'] == '1'):
-                            foreach ($bonuses as $name => $data): 
-                                $grandTotal += $data['total']; ?>
+                            foreach ($bonuses as $name => $data): ?>
                                 <tr class="table-secondary border-dark">
                                     <td colspan="2" class="fw-bold fs-6">👤 <?php echo htmlspecialchars($name); ?></td>
                                     <td class="text-end fs-5 fw-bold text-nowrap">
@@ -64,8 +62,7 @@ Es ist wie eine Gehaltsliste, die zur Buchhaltung geht. -->
                             <?php endforeach; ?>
 
                         <?php else: 
-                            foreach ($bonuses as $b): 
-                                $grandTotal += $b['amount']; ?>
+                            foreach ($bonuses as $b): ?>
                                 <tr>
                                     <td>
                                         <strong><?php echo htmlspecialchars($b['last_name'] . ', ' . $b['first_name']); ?></strong><br>
@@ -79,10 +76,7 @@ Es ist wie eine Gehaltsliste, die zur Buchhaltung geht. -->
                             <?php endforeach; ?>
                         <?php endif; ?>
 
-                        <tr class="table-dark">
-                            <td colspan="2" class="text-end fw-bold py-3">GESAMTAUSZAHLUNG:</td>
-                            <td class="text-end fw-bold py-3 fs-5 text-nowrap"><?php echo number_format($grandTotal, 2, ',', '.'); ?> €</td>
-                        </tr>
+
 
                     <?php else: ?>
                         <tr>
