@@ -2,7 +2,7 @@
 // views/hr_list.php
 // Diese Seite zeigt alle genehmigten Prämien für die HR-Abteilung zur Auszahlung.
 ?>
-<div class="card bg-white border-top border-primary border-4 p-2 mb-4">
+<div class="card bg-white">
     <div class="card-body p-4">
         
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3 d-print-none">
@@ -97,12 +97,5 @@ endif; ?>
                 </tbody>
             </table>
         </div>
-
-        <div class="print-signatures d-none d-print-flex">
-            <div class="sig-box">Erstellt (System / <?php echo date('d.m.Y'); ?>)</div>
-            <div class="sig-box">Geprüft (Personalabteilung)</div>
-            <div class="sig-box">Freigabe (Buchhaltung)</div>
-        </div>
-
     </div>
 </div>

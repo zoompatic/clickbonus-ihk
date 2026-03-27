@@ -4,7 +4,7 @@
 ?>
 <div class="row justify-content-center mt-5">
     <div class="col-12 col-md-6 col-lg-4">
-        <div class="card bg-white border-top border-primary border-4 p-3">
+        <div class="card bg-white">
             <div class="card-body">
                 <h3 class="text-center mb-4 text-uppercase fw-bold text-dark">Login</h3>
                 
@@ -24,7 +24,7 @@ endif; ?>
                         <label for="password" class="form-label text-muted small">Passwort:</label>
                         <input type="password" class="form-control" id="password" name="password" required>
                     </div>
-                    <button type="submit" class="btn btn-login w-100 text-uppercase fw-bold text-white">Einloggen</button>
+                    <button type="submit" class="btn btn-login w-100 text-uppercase fw-bold text-black border mb-2">Einloggen</button>
                 </form>
             </div>
         </div>

@@ -1,160 +1,491 @@
-/* ==========================================================================
-   ClickBonus - Bootstrap 5 Strict Overrides (Matching Original Screenshots)
-   ========================================================================== */
+/* ============================================================
+   Bootstrap 5 – Custom Theme
+   Farbpalette:
+   Rot     #b20838  → Aktions-Buttons
+   Beige   #fff2da  → Seitenhintergrund
+   Weiß    #ffffff  → Listen, Tabellen, Cards
+   Grün    #008752  → Success / Genehmigungs-Buttons
+   Schwarz #000000  → Navigationsbar
+   ============================================================ */
 
+/* ----------------------------------------------------------
+   1. CSS Custom Properties (Design Tokens)
+   ---------------------------------------------------------- */
 :root {
-    --bs-primary: #b20838;
-    --bs-primary-rgb: 178, 8, 56;
-    --bs-success: #008752;
-    --bs-success-rgb: 0, 135, 82;
-    --bs-body-bg: #faeed9; /* The exact beige background */
-    --bs-body-color: #333333;
-    
-    /* Force square corners globally (No rounded edges in original design) */
-    --bs-border-radius: 0 !important;
-    --bs-border-radius-sm: 0 !important;
-    --bs-border-radius-lg: 0 !important;
-    --bs-border-radius-xl: 0 !important;
-    --bs-border-radius-2xl: 0 !important;
-    --bs-border-radius-pill: 0 !important;
+  --color-action:      #b20838;
+  --color-action-dark: #8a0629;
+  --color-action-rgb:  178, 8, 56;
+
+  --color-success:      #008752;
+  --color-success-dark: #006640;
+  --color-success-rgb:  0, 135, 82;
+
+  --color-bg:      #fff2da;
+  --color-surface: #ffffff;
+  --color-nav:     #000000;
+
+  --color-text:        #1a1a1a;
+  --color-text-muted:  #6c6c6c;
+  --color-border:      #e8dcc8;
+
+  --radius-sm:  0.25rem;
+  --radius-md:  0.375rem;
+  --radius-lg:  0.5rem;
+
+  --transition: 0.2s ease-in-out;
 }
 
+/* ----------------------------------------------------------
+   2. Basis / Body
+   ---------------------------------------------------------- */
 body {
-    background-color: var(--bs-body-bg);
-    font-family: Arial, Helvetica, sans-serif; /* Fallback to standard web safe */
+  background-color: var(--color-bg);
+  color: var(--color-text);
 }
 
-/* Card Overrides */
-.card {
-    border: 1px solid #eee !important;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.03) !important; /* Subtle shadow */
-    border-radius: 0 !important;
+/* ----------------------------------------------------------
+   3. Navigationsbar
+   ---------------------------------------------------------- */
+.navbar,
+.navbar-dark,
+.bg-dark {
+  background-color: var(--color-nav) !important;
 }
 
-/* Navbar Overrides */
-.navbar {
-    background-color: #1a1a1a !important; /* Dark black */
-}
-.navbar-nav .nav-link {
-    font-size: 0.75rem;
-    color: #ccc !important;
-    font-weight: 500;
-}
-.navbar-nav .nav-link:hover {
-    color: #fff !important;
+.navbar .navbar-brand,
+.navbar .nav-link {
+  color: #ffffff !important;
 }
 
-/* Button Overrides */
-.btn {
-    border-radius: 0 !important;
-    font-size: 0.8rem;
-    font-weight: 700;
+.navbar .nav-link:hover,
+.navbar .nav-link:focus {
+  color: var(--color-action) !important;
 }
 
+.navbar .nav-link.active {
+  color: var(--color-action) !important;
+  font-weight: 600;
+}
+
+/* Dropdown-Menü innerhalb der Navbar */
+.navbar .dropdown-menu {
+  background-color: #1a1a1a;
+  border: 1px solid #333333;
+}
+
+.navbar .dropdown-item {
+  color: #e0e0e0;
+}
+
+.navbar .dropdown-item:hover,
+.navbar .dropdown-item:focus {
+  background-color: var(--color-action);
+  color: #ffffff;
+}
+
+/* ----------------------------------------------------------
+   4. Aktions-Buttons (Rot)
+   ---------------------------------------------------------- */
+
+/* Primary → Rot */
 .btn-primary {
-    background-color: var(--bs-primary) !important;
-    border-color: var(--bs-primary) !important;
-    color: white !important;
-}
-.btn-primary:hover {
-    background-color: #8e062d !important;
-    border-color: #8e062d !important;
+  background-color: var(--color-action);
+  border-color:     var(--color-action);
+  color: #ffffff;
 }
 
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active,
+.show > .btn-primary.dropdown-toggle {
+  background-color: var(--color-action-dark);
+  border-color:     var(--color-action-dark);
+  color: #ffffff;
+}
+
+.btn-primary:focus,
+.btn-primary:focus-visible {
+  box-shadow: 0 0 0 0.25rem rgba(var(--color-action-rgb), 0.35);
+}
+
+/* Outline-Variante */
 .btn-outline-primary {
-    color: var(--bs-primary) !important;
-    border-color: var(--bs-primary) !important;
-    background-color: transparent !important;
+  border-color: var(--color-action);
+  color:        var(--color-action);
 }
-.btn-outline-primary:hover {
-    background-color: var(--bs-primary) !important;
-    color: white !important;
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+  background-color: var(--color-action);
+  border-color:     var(--color-action);
+  color: #ffffff;
 }
+
+.btn-outline-primary:focus,
+.btn-outline-primary:focus-visible {
+  box-shadow: 0 0 0 0.25rem rgba(var(--color-action-rgb), 0.35);
+}
+
+/* Danger → ebenfalls Rot (semantisch konsistent) */
+.btn-danger {
+  background-color: var(--color-action);
+  border-color:     var(--color-action);
+  color: #ffffff;
+}
+
+.btn-danger:hover,
+.btn-danger:focus,
+.btn-danger:active {
+  background-color: var(--color-action-dark);
+  border-color:     var(--color-action-dark);
+  color: #ffffff;
+}
+
+.btn-danger:focus,
+.btn-danger:focus-visible {
+  box-shadow: 0 0 0 0.25rem rgba(var(--color-action-rgb), 0.35);
+}
+
+/* ----------------------------------------------------------
+   5. Success / Genehmigungs-Buttons (Grün)
+   ---------------------------------------------------------- */
 
 .btn-success {
-    background-color: var(--bs-success) !important;
-    border-color: var(--bs-success) !important;
-    color: white !important;
-}
-.btn-success:hover {
-    background-color: #00663e !important;
-    border-color: #00663e !important;
+  background-color: var(--color-success);
+  border-color:     var(--color-success);
+  color: #ffffff;
 }
 
-/* Form Controls */
-.form-control, .form-select {
-    border-radius: 0 !important;
-    border: 1px solid #ddd !important;
-}
-.form-control:focus, .form-select:focus {
-    box-shadow: none !important;
-    border-color: var(--bs-primary) !important;
-}
-
-/* Override the form switch to be square */
-.form-check-switch .form-check-input {
-    border-radius: 0 !important;
+.btn-success:hover,
+.btn-success:focus,
+.btn-success:active,
+.btn-success.active,
+.show > .btn-success.dropdown-toggle {
+  background-color: var(--color-success-dark);
+  border-color:     var(--color-success-dark);
+  color: #ffffff;
 }
 
-/* Table Overrides */
+.btn-success:focus,
+.btn-success:focus-visible {
+  box-shadow: 0 0 0 0.25rem rgba(var(--color-success-rgb), 0.35);
+}
+
+/* Outline-Variante */
+.btn-outline-success {
+  border-color: var(--color-success);
+  color:        var(--color-success);
+}
+
+.btn-outline-success:hover,
+.btn-outline-success:focus,
+.btn-outline-success:active {
+  background-color: var(--color-success);
+  border-color:     var(--color-success);
+  color: #ffffff;
+}
+
+.btn-outline-success:focus,
+.btn-outline-success:focus-visible {
+  box-shadow: 0 0 0 0.25rem rgba(var(--color-success-rgb), 0.35);
+}
+
+/* ----------------------------------------------------------
+   6. Cards
+   ---------------------------------------------------------- */
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.card-header {
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  font-weight: 600;
+}
+
+.card-footer {
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+
+/* ----------------------------------------------------------
+   7. Tabellen
+   ---------------------------------------------------------- */
 .table {
-    border: none !important;
+  background-color: var(--color-surface);
+  --bs-table-bg: var(--color-surface);
+  --bs-table-striped-bg: #f7f0e3;
+  --bs-table-hover-bg: #fce9c5;
+  --bs-table-border-color: var(--color-border);
+  color: var(--color-text);
 }
-.table thead {
-    background-color: #f6ebd5 !important; /* Beige/Tan table header */
-    border-bottom: 2px solid var(--bs-primary) !important;
-}
+
 .table thead th {
-    background-color: transparent !important;
-    color: #333 !important;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    border: none !important;
-    padding: 12px 10px;
-    letter-spacing: 0.5px;
-}
-.table tbody td {
-    border: none !important;
-    border-bottom: 1px solid #eee !important;
-    padding: 12px 10px;
-    font-size: 0.85rem;
-    vertical-align: middle;
+  background-color: var(--color-nav);
+  color: #ffffff;
+  border-color: #333333;
+  font-weight: 600;
+  letter-spacing: 0.03em;
 }
 
-/* Badge (Status) Override */
-.badge.bg-secondary {
-    background-color: #f6ebd5 !important;
-    color: #333 !important;
-    border-left: 3px solid #ccc !important;
-    font-size: 0.75rem;
-    border-radius: 0 !important;
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+  background-color: #f7f0e3;
 }
 
-/* Typography Utilities */
-.text-primary, h1.text-primary, h2.text-primary {
-    color: var(--bs-primary) !important;
-    text-transform: uppercase;
-    font-weight: 800 !important;
+.table-hover > tbody > tr:hover > * {
+  background-color: #fce9c5;
 }
 
-/* Specific Buttons */
-.btn-login {
-    background-color: #2c3e50 !important;
-    border-color: #2c3e50 !important;
-    color: white !important;
-}
-.btn-login:hover {
-    background-color: #1a252f !important;
+/* ----------------------------------------------------------
+   8. Listen (List Groups)
+   ---------------------------------------------------------- */
+.list-group-item {
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
 }
 
-/* Print Utilities */
-@media print {
-    @page { margin: 1cm; }
-    body { background: white !important; color: black; font-size: 10pt; }
-    .card { border: none !important; box-shadow: none !important; padding: 0 !important; }
-    .table thead { border-bottom: 1px solid #000 !important; background-color: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .table td { border-bottom: 1px solid #000 !important; }
-    .print-signatures { display: flex !important; margin-top: 60px; justify-content: space-between; page-break-inside: avoid; }
-    .sig-box { border-top: 1px solid #000; width: 30%; text-align: center; padding-top: 5px; font-size: 0.85rem; font-weight: bold; }
+.list-group-item.active {
+  background-color: var(--color-action);
+  border-color:     var(--color-action);
+  color: #ffffff;
+}
+
+.list-group-item-action:hover,
+.list-group-item-action:focus {
+  background-color: #fce9c5;
+  color: var(--color-text);
+}
+
+/* ----------------------------------------------------------
+   9. Badges & Alerts
+   ---------------------------------------------------------- */
+
+/* Primär-Badge (Rot) */
+.badge.bg-primary { background-color: var(--color-action) !important; }
+
+/* Success-Badge (Grün) */
+.badge.bg-success { background-color: var(--color-success) !important; }
+
+/* Danger-Badge (Rot) */
+.badge.bg-danger  { background-color: var(--color-action) !important; }
+
+/* Alerts */
+.alert-primary {
+  background-color: rgba(var(--color-action-rgb), 0.1);
+  border-color:     rgba(var(--color-action-rgb), 0.3);
+  color: var(--color-action-dark);
+}
+
+.alert-success {
+  background-color: rgba(var(--color-success-rgb), 0.1);
+  border-color:     rgba(var(--color-success-rgb), 0.3);
+  color: var(--color-success-dark);
+}
+
+.alert-danger {
+  background-color: rgba(var(--color-action-rgb), 0.1);
+  border-color:     rgba(var(--color-action-rgb), 0.3);
+  color: var(--color-action-dark);
+}
+
+/* ----------------------------------------------------------
+   10. Formular-Elemente
+   ---------------------------------------------------------- */
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--color-action);
+  box-shadow: 0 0 0 0.25rem rgba(var(--color-action-rgb), 0.25);
+}
+
+.form-check-input:checked {
+  background-color: var(--color-action);
+  border-color:     var(--color-action);
+}
+
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.25rem rgba(var(--color-action-rgb), 0.25);
+}
+
+/* Success-Zustand bei Formularen */
+.form-control.is-valid,
+.form-select.is-valid {
+  border-color: var(--color-success);
+}
+
+.form-control.is-valid:focus,
+.form-select.is-valid:focus {
+  border-color: var(--color-success);
+  box-shadow: 0 0 0 0.25rem rgba(var(--color-success-rgb), 0.25);
+}
+
+.valid-feedback {
+  color: var(--color-success);
+}
+
+.invalid-feedback {
+  color: var(--color-action);
+}
+
+/* ----------------------------------------------------------
+   11. Pagination
+   ---------------------------------------------------------- */
+.page-link {
+  color: var(--color-action);
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+.page-link:hover {
+  color: var(--color-action-dark);
+  background-color: #fce9c5;
+  border-color: var(--color-border);
+}
+
+.page-item.active .page-link {
+  background-color: var(--color-action);
+  border-color:     var(--color-action);
+  color: #ffffff;
+}
+
+/* ----------------------------------------------------------
+   12. Links & Text-Farben
+   ---------------------------------------------------------- */
+a {
+  color: var(--color-action);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+a:hover {
+  color: var(--color-action-dark);
+}
+
+.text-primary { color: var(--color-action)  !important; }
+.text-success { color: var(--color-success) !important; }
+.text-danger  { color: var(--color-action)  !important; }
+
+.bg-primary { background-color: var(--color-action)  !important; }
+.bg-success { background-color: var(--color-success) !important; }
+.bg-dark    { background-color: var(--color-nav)     !important; }
+
+/* ----------------------------------------------------------
+   13. Spinner / Progress
+   ---------------------------------------------------------- */
+.spinner-border.text-primary,
+.spinner-grow.text-primary {
+  color: var(--color-action) !important;
+}
+
+.progress-bar {
+  background-color: var(--color-action);
+}
+
+.progress-bar.bg-success {
+  background-color: var(--color-success) !important;
+}
+
+/* ----------------------------------------------------------
+   14. Modal
+   ---------------------------------------------------------- */
+.modal-header {
+  background-color: var(--color-nav);
+  color: #ffffff;
+  border-bottom: none;
+}
+
+.modal-header .btn-close {
+  filter: invert(1);
+}
+
+.modal-content {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.modal-footer {
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+}
+
+/* ----------------------------------------------------------
+   15. Tabs & Accordion
+   ---------------------------------------------------------- */
+.nav-tabs .nav-link {
+  color: var(--color-text-muted);
+}
+
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-item.show .nav-link {
+  color: var(--color-action);
+  border-color: var(--color-border) var(--color-border) var(--color-surface);
+  font-weight: 600;
+}
+
+.nav-tabs .nav-link:hover {
+  color: var(--color-action);
+}
+
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+  background-color: var(--color-action);
+  color: #ffffff;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: rgba(var(--color-action-rgb), 0.08);
+  color: var(--color-action);
+  box-shadow: inset 0 -1px 0 rgba(var(--color-action-rgb), 0.2);
+}
+
+.accordion-button:focus {
+  box-shadow: 0 0 0 0.25rem rgba(var(--color-action-rgb), 0.25);
+}
+
+/* ----------------------------------------------------------
+   16. Tooltips & Popovers
+   ---------------------------------------------------------- */
+.tooltip .tooltip-inner {
+  background-color: var(--color-nav);
+}
+
+.bs-tooltip-auto[data-popper-placement^="top"] .tooltip-arrow::before,
+.bs-tooltip-top .tooltip-arrow::before {
+  border-top-color: var(--color-nav);
+}
+
+.bs-tooltip-auto[data-popper-placement^="bottom"] .tooltip-arrow::before,
+.bs-tooltip-bottom .tooltip-arrow::before {
+  border-bottom-color: var(--color-nav);
+}
+
+.popover-header {
+  background-color: var(--color-nav);
+  color: #ffffff;
+  border-bottom: none;
+}
+
+/* ----------------------------------------------------------
+   17. Utility-Klassen (Custom)
+   ---------------------------------------------------------- */
+
+/* Hintergründe */
+.bg-beige   { background-color: var(--color-bg) !important; }
+.bg-surface { background-color: var(--color-surface) !important; }
+.bg-action  { background-color: var(--color-action) !important; }
+
+/* Border-Akzent oben (für Cards, Sections) */
+.border-action  { border-top: 3px solid var(--color-action) !important; }
+.border-success { border-top: 3px solid var(--color-success) !important; }
+
+/* Section-Trenner */
+.section-divider {
+  border: none;
+  border-top: 2px solid var(--color-border);
+  margin: 2rem 0;
 }

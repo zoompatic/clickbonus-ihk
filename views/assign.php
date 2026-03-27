@@ -1,9 +1,8 @@
 <?php
-
 // views/assign.php 
 // Diese Seite zeigt Details zu einem Projekt und erlaubt das Zuweisen von Mitarbeitern sowie das Beantragen von Prämien.
 ?>
-<div class="card shadow-sm mb-4 border-top border-primary border-4">
+<div class="card bg-white">
     <div class="card-body p-4">
         <div class="mb-4">
             <a href="?action=<?php echo($_SESSION['role_id'] == 4) ? 'my_projects' : 'projects'; ?>" class="btn btn-outline-secondary btn-sm mb-3">&larr; ZURÜCK</a>
@@ -31,10 +30,9 @@
                                         <option value="">-- Bitte wählen --</option>
                                         <?php foreach ($allUsers as $user): ?>
                                             <option value="<?php echo $user['id']; ?>">
-                                                <?php echo htmlspecialchars($user['last_name'] . ', ' . $user['first_name']); ?>
+                                                <?php echo htmlspecialchars($user['last_name'] . ', ' . $user['first_name'] . ' (' . $user['role_name'] . ')'); ?>
                                             </option>
-                                        <?php
-    endforeach; ?>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                                 <button type="submit" class="btn btn-success fw-bold w-100">+ ZUWEISEN</button>
@@ -42,18 +40,16 @@
                         </div>
                     </div>
                 </div>
-            <?php
-endif; ?>
+            <?php endif; ?>
 
             <div class="col-12 col-lg-7">
                 <h3 class="h5 mb-3 text-uppercase fw-bold border-bottom pb-2">Projekt-Team</h3>
                 <div class="d-flex flex-column gap-3">
                     <?php if (empty($assignedUsers)): ?>
                         <div class="text-muted p-3 bg-light rounded">Noch keine Mitarbeiter zugewiesen.</div>
-                    <?php
-endif; ?>
+                    <?php endif; ?>
                     <?php foreach ($assignedUsers as $assignedEmployee): ?>
-                        <div class="card shadow-sm border-start border-primary border-4 bg-light">
+                        <div class="card shadow-sm border-start border-none border-4 bg-light">
                             <div class="card-body p-3">
                                 <div class="mb-3">
                                     <strong class="fs-6">👤 <?php echo htmlspecialchars($assignedEmployee['first_name'] . ' ' . $assignedEmployee['last_name']); ?></strong>
@@ -74,8 +70,7 @@ endif; ?>
                                 </form>
                             </div>
                         </div>
-                    <?php
-endforeach; ?>
+                    <?php endforeach; ?>
                 </div>
             </div>
         </div>

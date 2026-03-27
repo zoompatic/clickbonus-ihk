@@ -2,7 +2,7 @@
 // views/projects.php
 // Diese Seite zeigt alle importierten Projekte in einer Tabelle an.
 ?>
-<div class="card bg-white border-top border-primary border-4 p-2 mb-4">
+<div class="card bg-white">
     <div class="card-body p-4">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
             <div>

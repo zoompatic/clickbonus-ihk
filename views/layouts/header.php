@@ -17,7 +17,7 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-primary border-4 mb-4 d-print-none">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark d-print-none">
     <div class="container">
         <a class="navbar-brand fw-bold mb-0 h1" href="index.php">
             Click<span class="text-secondary fw-light">Bonus</span>

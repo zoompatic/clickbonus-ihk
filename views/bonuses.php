@@ -1,7 +1,6 @@
 <?php // views/bonuses.php 
-// Diese Seite zeigt alle wartenden Prämienanträge zur Genehmigung oder Ablehnung.
 ?>
-<div class="card bg-white border-top border-primary border-4 p-2 mb-4">
+<div class="card bg-white">
     <div class="card-body p-4">
         <h2 class="text-primary mb-1 text-uppercase fw-bold">Wartende Freigaben</h2>
         <p class="text-muted mb-4 small">Hier landen alle beantragten Prämien zur Prüfung und Freigabe.</p>
@@ -42,11 +41,9 @@
                                 <td class="small">
                                     <?php if ($bonus['comment']): ?>
                                         <span class="text-muted fst-italic"><?php echo htmlspecialchars($bonus['comment']); ?></span>
-                                    <?php
-        else: ?>
+                                    <?php else: ?>
                                         <span class="text-muted">-</span>
-                                    <?php
-        endif; ?>
+                                    <?php endif; ?>
                                 </td>
                                 <td class="text-end fw-bold fs-5 text-nowrap">
                                     <?php echo number_format($bonus['amount'], 2, ',', '.'); ?> €
@@ -65,40 +62,39 @@
                                 </td>
                                 <td class="text-end">
                                     <?php if (in_array($bonus['current_status_id'], [1, 2])): ?>
-                                        <div class="d-flex flex-column gap-2 align-items-end">
-                                            <form method="POST" action="?action=update_bonus_status" class="w-100" style="max-width: 140px;">
-                                                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
-                                                <input type="hidden" name="bonus_id" value="<?php echo $bonus['bonus_id']; ?>">
-                                                <input type="hidden" name="action_type" value="approve">
-                                                <button type="submit" class="btn btn-success btn-sm w-100 fw-bold">FREIGEBEN</button>
-                                            </form>
+                                        <?php if ($bonus['created_by'] == $_SESSION['user_id']): ?>
+                                            <span class="text-muted small fw-bold">Wartet auf<br>2. Freigabe</span>
+                                        <?php else: ?>
+                                            <div class="d-flex flex-column gap-2 align-items-end">
+                                                <form method="POST" action="?action=update_bonus_status" class="w-100" style="max-width: 140px;">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                                                    <input type="hidden" name="bonus_id" value="<?php echo $bonus['bonus_id']; ?>">
+                                                    <input type="hidden" name="action_type" value="approve">
+                                                    <button type="submit" class="btn btn-success btn-sm w-100 fw-bold">FREIGEBEN</button>
+                                                </form>
 
-                                        <form method="POST" action="?action=update_bonus_status" class="w-100 mt-1" style="max-width: 140px;">
-                                            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
-                                            <input type="hidden" name="bonus_id" value="<?php echo $bonus['bonus_id']; ?>">
-                                            <input type="hidden" name="action_type" value="reject">
-                                            <div class="input-group input-group-sm">
-                                                <input type="text" name="comment" class="form-control" placeholder="Grund..." required>
-                                                <button type="submit" class="btn btn-primary" title="Ablehnen">❌</button>
+                                                <form method="POST" action="?action=update_bonus_status" class="w-100 mt-1" style="max-width: 140px;">
+                                                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                                                    <input type="hidden" name="bonus_id" value="<?php echo $bonus['bonus_id']; ?>">
+                                                    <input type="hidden" name="action_type" value="reject">
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="text" name="comment" class="form-control" placeholder="Grund..." required>
+                                                        <button type="submit" class="btn btn-primary" title="Ablehnen">❌</button>
+                                                    </div>
+                                                </form>
                                             </div>
-                                        </form>
-                                        </div>
-                                    <?php
-        else: ?>
+                                        <?php endif; ?>
+                                    <?php else: ?>
                                         <span class="text-muted small fw-bold text-uppercase">Abgeschlossen</span>
-                                    <?php
-        endif; ?>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
-                        <?php
-    endforeach; ?>
-                    <?php
-else: ?>
+                        <?php endforeach; ?>
+                    <?php else: ?>
                         <tr>
                             <td colspan="8" class="p-5 text-center text-muted">Es liegen aktuell keine Freigabe-Anträge vor.</td>
                         </tr>
-                    <?php
-endif; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>

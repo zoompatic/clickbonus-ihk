@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Database;
 use PDO;
 
-// Status-Konstanten als Hilfe für die Lesbarkeit.
 class Status
 {
     const DRAFT = 1;
@@ -16,22 +15,18 @@ class Status
 
 class Bonus
 {
-
-
-    // Erstellt eine neue Prämie und setzt den Startstatus auf 'PENDING'
     public static function create($assignmentId, $amount, $comment, $creatorUserId)
     {
         $database = Database::getConnection();
         try {
             $database->beginTransaction();
 
-            // SQL Injection Schutz durch Prepared Statements
             $statement = $database->prepare("INSERT INTO bonuses (project_assignment_id, amount, comment, created_by) VALUES (?, ?, ?, ?)");
             $statement->execute([$assignmentId, $amount, $comment, $creatorUserId]);
             $bonusId = $database->lastInsertId();
 
             $approvalStatement = $database->prepare("INSERT INTO approvals (bonus_id, user_id, approval_status_id, comment) VALUES (?, ?, ?, ?)");
-            $approvalStatement->execute([$bonusId, $creatorUserId, Status::PENDING, "Prämie beantragt"]);
+            $approvalStatement->execute([$bonusId, $creatorUserId, Status::PENDING, $comment]);
 
             $database->commit();
             return true;
@@ -43,7 +38,14 @@ class Bonus
         }
     }
 
-    // Abholung einer Prämie für eine Zuweisung unter Nutzung der SQL-View.
+    public static function getById($id)
+    {
+        $database = Database::getConnection();
+        $statement = $database->prepare("SELECT * FROM bonuses WHERE id = ?");
+        $statement->execute([$id]);
+        return $statement->fetch();
+    }
+
     public static function getForAssignment($assignmentId)
     {
         $database = Database::getConnection();
@@ -57,7 +59,6 @@ class Bonus
         return $statement->fetchAll();
     }
 
-    // Abholung aller Prämien mit Status DRAFT oder PENDING.
     public static function getAllWithDetails()
     {
         $database = Database::getConnection();
@@ -65,7 +66,7 @@ class Bonus
             SELECT b.id as bonus_id, b.amount, b.comment, b.created_at,
                    u.first_name, u.last_name, p.name as project_name,
                    req_u.first_name as req_first_name, req_u.last_name as req_last_name,
-                   v.current_status, v.current_status_id
+                   v.current_status, v.current_status_id, b.created_by
             FROM bonuses b
             JOIN view_bonus_status v ON b.id = v.bonus_id
             JOIN project_assignments pa ON b.project_assignment_id = pa.id
@@ -79,7 +80,6 @@ class Bonus
         return $database->query($sql)->fetchAll();
     }
 
-    // Abholung aller Prämien mit Status APPROVED.
     public static function getFullyApproved($limitToUserId = null, $startDate = null, $endDate = null)
     {
         $database = Database::getConnection();
@@ -111,18 +111,13 @@ class Bonus
         return $statement->fetchAll();
     }
 
-
-
-    // Verarbeitung der Genehmigung oder Ablehnung.  
     public static function processApproval($bonusId, $userId, $isApproved, $comment = '')
     {
         $database = Database::getConnection();
 
-        $statusId = $isApproved ?Status::APPROVED : Status::REJECTED;
+        $statusId = $isApproved ? Status::APPROVED : Status::REJECTED;
 
         $statement = $database->prepare("INSERT INTO approvals (bonus_id, user_id, approval_status_id, comment) VALUES (?, ?, ?, ?)");
         return $statement->execute([$bonusId, $userId, $statusId, $comment]);
     }
-
-
 }
