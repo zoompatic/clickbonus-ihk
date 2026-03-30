@@ -186,14 +186,16 @@ switch ($action) {
 
     case 'projects':
         // Alle aktiven Projekte für die IT-Manager-Übersicht abrufen.
-        $projects = Project::getAll();
+        $projects    = Project::getAll();
+        $viewModus   = 'manager'; // Modus für IT-Manager: zeigt Import-Button und Zuweisungsfunktion.
         require_once __DIR__ . '/../views/projects.php';
         break;
 
     case 'my_projects':
         // Nur die Projekte laden, denen der angemeldete Projektmanager zugewiesen ist.
-        $projects = Project::getByUserId($_SESSION['user_id']);
-        require_once __DIR__ . '/../views/my_projects.php';
+        $projects    = Project::getByUserId($_SESSION['user_id']);
+        $viewModus   = 'my_projects'; // Modus für Projektmanager: zeigt nur eigene Projekte und Prämien-Detail.
+        require_once __DIR__ . '/../views/projects.php';
         break;
 
     case 'assign':

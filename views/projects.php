@@ -1,15 +1,27 @@
 <?php
 // views/projects.php
-// Diese Seite zeigt alle importierten Projekte in einer Tabelle an.
+// Diese gemeinsame View zeigt Projekte an – sowohl für IT-Manager als auch für Projektmanager.
+// Der Anzeigemodus wird über die Variable $viewModus aus index.php gesteuert:
+//   'manager'    → IT-Manager-Ansicht mit ClickUp-Import-Button und "Mitarbeiter Zuweisen"
+//   'my_projects' → Projektmanager-Ansicht mit "Detail / Prämien"
 ?>
 <div class="card bg-white">
     <div class="card-body p-4">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
             <div>
-                <h2 class="text-primary mb-1 text-uppercase fw-bold">Importierte Projekte</h2>
-                <span class="text-muted small">Hier siehst du alle Projekte, die aus ClickUp synchronisiert wurden.</span>
+                <?php if ($viewModus === 'manager'): ?>
+                    <h2 class="text-primary mb-1 text-uppercase fw-bold">Importierte Projekte</h2>
+                    <span class="text-muted small">Hier siehst du alle Projekte, die aus ClickUp synchronisiert wurden.</span>
+                <?php else: ?>
+                    <h2 class="text-primary mb-1 text-uppercase fw-bold">Meine Projekte</h2>
+                    <span class="text-muted small">Hier siehst du alle Projekte, die dir zugewiesen wurden.</span>
+                <?php endif; ?>
             </div>
-            <a href="?action=sync" class="btn btn-outline-primary fw-bold text-uppercase">ClickUp Import</a>
+
+            <?php if ($viewModus === 'manager'): ?>
+                <!-- Import-Button ist nur für den IT-Manager sichtbar. -->
+                <a href="?action=sync" class="btn btn-outline-primary fw-bold text-uppercase">ClickUp Import</a>
+            <?php endif; ?>
         </div>
 
         <div class="table-responsive">
@@ -43,21 +55,18 @@
                                 </td>
                                 <td class="text-end">
                                     <a href="?action=assign&project_id=<?php echo $project['id']; ?>" class="btn btn-primary btn-sm fw-bold">
-                                        Mitarbeiter Zuweisen
+                                        <?php echo $viewModus === 'manager' ? 'Mitarbeiter Zuweisen' : 'Detail / Prämien'; ?>
                                     </a>
                                 </td>
                             </tr>
-                        <?php
-    endforeach; ?>
-                    <?php
-else: ?>
+                        <?php endforeach; ?>
+                    <?php else: ?>
                         <tr>
                             <td colspan="5" class="p-5 text-center text-muted">
-                                Keine Projekte gefunden. Bitte synchronisiere ClickUp!
+                                <?php echo $viewModus === 'manager' ? 'Keine Projekte gefunden. Bitte synchronisiere ClickUp!' : 'Keine Projekte zugewiesen.'; ?>
                             </td>
                         </tr>
-                    <?php
-endif; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
