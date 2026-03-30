@@ -50,18 +50,22 @@
                                 </td>
                                 <td class="text-end">
                                     <?php
+        // Badge-Farbe abhängig vom aktuellen Status setzen.
         $badgeClass = 'bg-secondary';
-        if ($bonus['current_status_id'] == 1)
+        if ($bonus['current_status_id'] == 1) // PENDING
             $badgeClass = 'bg-warning text-dark';
-        if ($bonus['current_status_id'] == 2)
-            $badgeClass = 'bg-info text-dark';
+        if ($bonus['current_status_id'] == 2) // APPROVED
+            $badgeClass = 'bg-success';
+        if ($bonus['current_status_id'] == 3) // REJECTED
+            $badgeClass = 'bg-danger';
 ?>
                                     <span class="badge <?php echo $badgeClass; ?> text-uppercase rounded-1 px-2 py-1">
                                         <?php echo htmlspecialchars($bonus['current_status']); ?>
                                     </span>
                                 </td>
                                 <td class="text-end">
-                                    <?php if (in_array($bonus['current_status_id'], [1, 2])): ?>
+                                    <?php if ($bonus['current_status_id'] == 1): // Nur bei PENDING Aktionen anzeigen
+                                    ?>
                                         <?php if ($bonus['created_by'] == $_SESSION['user_id']): ?>
                                             <span class="text-muted small fw-bold">Wartet auf<br>2. Freigabe</span>
                                         <?php else: ?>

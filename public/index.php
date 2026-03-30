@@ -23,10 +23,9 @@ class Role {
 // Status-Konstanten: Spiegeln die Zustände einer Prämie wider.
 // Diese Klasse existiert hier zusätzlich zu App\Models\Status für den globalen Zugriff im Template.
 class Status {
-    const DRAFT    = 1;
-    const PENDING  = 2;
-    const APPROVED = 3;
-    const REJECTED = 4;
+    const PENDING  = 1;
+    const APPROVED = 2;
+    const REJECTED = 3;
 }
 
 // CSRF-Token erstellen, falls noch keiner in der Session vorhanden ist.

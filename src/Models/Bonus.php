@@ -9,10 +9,9 @@ use PDO;
 // Die numerischen Werte entsprechen den IDs in der Datenbanktabelle 'approval_statuses'.
 class Status
 {
-    const DRAFT    = 1; // Entwurf: Prämie wurde noch nicht eingereicht.
-    const PENDING  = 2; // Ausstehend: Prämie wurde beantragt und wartet auf Genehmigung.
-    const APPROVED = 3; // Genehmigt: Prämie wurde final freigegeben.
-    const REJECTED = 4; // Abgelehnt: Prämie wurde abgelehnt.
+    const PENDING  = 1; // Ausstehend: Prämie wurde beantragt und wartet auf Genehmigung.
+    const APPROVED = 2; // Genehmigt: Prämie wurde final freigegeben.
+    const REJECTED = 3; // Abgelehnt: Prämie wurde abgelehnt.
 }
 
 // Diese Klasse verwaltet alle Datenbankoperationen rund um Prämien.
@@ -89,7 +88,7 @@ class Bonus
             JOIN projects p ON pa.project_id = p.id
             LEFT JOIN users req_u ON b.created_by = req_u.id
             WHERE b.deleted_at IS NULL 
-            AND v.current_status_id IN (" . Status::DRAFT . ", " . Status::PENDING . ")
+            AND v.current_status_id = " . Status::PENDING . "
             ORDER BY b.created_at DESC
         ";
         return $database->query($sql)->fetchAll();
