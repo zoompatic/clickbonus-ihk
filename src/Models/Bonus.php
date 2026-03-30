@@ -5,39 +5,50 @@ namespace App\Models;
 use App\Database;
 use PDO;
 
+// Diese Hilfsklasse enthält Statuskonstanten für Prämien und Genehmigungen.
+// Die numerischen Werte entsprechen den IDs in der Datenbanktabelle 'approval_statuses'.
 class Status
 {
-    const DRAFT = 1;
-    const PENDING = 2;
-    const APPROVED = 3;
-    const REJECTED = 4;
+    const DRAFT    = 1; // Entwurf: Prämie wurde noch nicht eingereicht.
+    const PENDING  = 2; // Ausstehend: Prämie wurde beantragt und wartet auf Genehmigung.
+    const APPROVED = 3; // Genehmigt: Prämie wurde final freigegeben.
+    const REJECTED = 4; // Abgelehnt: Prämie wurde abgelehnt.
 }
 
+// Diese Klasse verwaltet alle Datenbankoperationen rund um Prämien.
+// Sie deckt das Erstellen, Abrufen und Genehmigen von Prämien ab.
 class Bonus
 {
+    // Erstellt eine neue Prämie und legt gleichzeitig den ersten Genehmigungseintrag an.
+    // Beides wird in einer Transaktion ausgeführt, damit keine inkonsistenten Daten entstehen.
     public static function create($assignmentId, $amount, $comment, $creatorUserId)
     {
         $database = Database::getConnection();
         try {
             $database->beginTransaction();
 
+            // Prämie in der Haupttabelle speichern.
             $statement = $database->prepare("INSERT INTO bonuses (project_assignment_id, amount, comment, created_by) VALUES (?, ?, ?, ?)");
             $statement->execute([$assignmentId, $amount, $comment, $creatorUserId]);
             $bonusId = $database->lastInsertId();
 
+            // Ersten Genehmigungseintrag mit Status 'Ausstehend' anlegen.
             $approvalStatement = $database->prepare("INSERT INTO approvals (bonus_id, user_id, approval_status_id, comment) VALUES (?, ?, ?, ?)");
-            $approvalStatement->execute([$bonusId, $creatorUserId, Status::PENDING, $comment]);
+            $approvalStatement->execute([$bonusId, $creatorUserId, Status::PENDING, "Prämie beantragt"]);
 
             $database->commit();
             return true;
         }
         catch (\Exception $error) {
+            // Bei einem Fehler werden alle Änderungen rückgängig gemacht.
             $database->rollBack();
             error_log("Fehler beim Erstellen der Prämie: " . $error->getMessage());
             return false;
         }
     }
 
+    // Holt eine einzelne Prämie anhand ihrer ID.
+    // Wird z. B. vor der Statusprüfung beim Vier-Augen-Prinzip verwendet.
     public static function getById($id)
     {
         $database = Database::getConnection();
@@ -46,6 +57,8 @@ class Bonus
         return $statement->fetch();
     }
 
+    // Holt alle Prämien für eine bestimmte Projektzuweisung (project_assignment).
+    // Wird auf der Zuweisungsseite angezeigt, um den aktuellen Status je Mitarbeiter zu sehen.
     public static function getForAssignment($assignmentId)
     {
         $database = Database::getConnection();
@@ -59,6 +72,8 @@ class Bonus
         return $statement->fetchAll();
     }
 
+    // Holt alle offenen Prämien (Status: Entwurf oder Ausstehend) mit allen relevanten Details.
+    // Diese Methode wird für die Freigabe-Übersicht der Manager verwendet.
     public static function getAllWithDetails()
     {
         $database = Database::getConnection();
@@ -80,6 +95,8 @@ class Bonus
         return $database->query($sql)->fetchAll();
     }
 
+    // Holt alle final genehmigten Prämien für die HR-Auszahlungsliste.
+    // Filter nach Benutzer und Zeitraum sind optional und werden nur bei Bedarf angewendet.
     public static function getFullyApproved($limitToUserId = null, $startDate = null, $endDate = null)
     {
         $database = Database::getConnection();
@@ -93,14 +110,18 @@ class Bonus
                 WHERE b.deleted_at IS NULL AND v.current_status_id = " . Status::APPROVED;
 
         $params = [];
+
+        // Optionaler Filter: nur Prämien eines bestimmten Benutzers.
         if ($limitToUserId) {
             $sql .= " AND pa.user_id = :uid";
             $params['uid'] = $limitToUserId;
         }
+        // Optionaler Filter: nur Prämien ab einem bestimmten Datum.
         if ($startDate) {
             $sql .= " AND v.last_update >= :sd";
             $params['sd'] = $startDate . " 00:00:00";
         }
+        // Optionaler Filter: nur Prämien bis zu einem bestimmten Datum.
         if ($endDate) {
             $sql .= " AND v.last_update <= :ed";
             $params['ed'] = $endDate . " 23:59:59";
@@ -111,10 +132,13 @@ class Bonus
         return $statement->fetchAll();
     }
 
+    // Verarbeitet eine Genehmigung oder Ablehnung einer Prämie.
+    // Ein neuer Eintrag in der 'approvals'-Tabelle wird mit dem entsprechenden Status angelegt.
     public static function processApproval($bonusId, $userId, $isApproved, $comment = '')
     {
         $database = Database::getConnection();
 
+        // Statuswert anhand der Entscheidung des Benutzers auswählen.
         $statusId = $isApproved ? Status::APPROVED : Status::REJECTED;
 
         $statement = $database->prepare("INSERT INTO approvals (bonus_id, user_id, approval_status_id, comment) VALUES (?, ?, ?, ?)");
