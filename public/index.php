@@ -8,25 +8,10 @@ ini_set('session.use_strict_mode', 1);
 
 session_start();
 
-ini_set('display_errors', 0); 
+ini_set('display_errors', 0);
 error_reporting(E_ALL);
 ini_set('log_errors', 1);
 
-// Rollen-Konstanten: Numerische IDs zur Rollenzuweisung aus der Datenbank.
-class Role {
-    const IT_MANAGER      = 1; 
-    const PROJECT_MANAGER = 2;
-    const HR              = 3;
-    const EMPLOYEE        = 4;
-}
-
-// Status-Konstanten: Spiegeln die Zustände einer Prämie wider.
-// Diese Klasse existiert hier zusätzlich zu App\Models\Status für den globalen Zugriff im Template.
-class Status {
-    const PENDING  = 1;
-    const APPROVED = 2;
-    const REJECTED = 3;
-}
 
 // CSRF-Token erstellen, falls noch keiner in der Session vorhanden ist.
 // Dieser Token schützt alle Formulare vor Cross-Site-Request-Forgery-Angriffen.
@@ -37,21 +22,25 @@ if (empty($_SESSION['csrf_token'])) {
 // Autoloader: Lädt Klassen automatisch anhand ihres Namespaces und Dateinamens.
 // So müssen nicht alle Klassen manuell per require_once eingebunden werden.
 spl_autoload_register(function ($class) {
-    $prefix   = 'App\\';
+    $prefix = 'App\\';
     $base_dir = __DIR__ . '/../src/';
-    $len      = strlen($prefix);
-    if (strncmp($prefix, $class, $len) !== 0) return;
+    $len = strlen($prefix);
+    if (strncmp($prefix, $class, $len) !== 0)
+        return;
     $relative_class = substr($class, $len);
     $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-    if (file_exists($file)) require $file;
+    if (file_exists($file))
+        require $file;
 });
 
 // Konfiguration aus der .env-Datei laden und Datenbankverbindung aufbauen.
-\App\Config::load(); 
+\App\Config::load();
 use App\Database;
 use App\Models\User;
 use App\Models\Project;
 use App\Models\Bonus;
+use App\Models\Role;
+use App\Models\Status;
 
 try {
     $database = Database::getConnection();
@@ -82,14 +71,14 @@ if ($action === 'login' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = User::authenticate($_POST['email'] ?? '', $_POST['password'] ?? '');
     if ($user) {
         // Session-ID nach erfolgreichem Login erneuern, um Session-Fixation zu verhindern.
-        session_regenerate_id(true); 
-        
-        $_SESSION['user_id']    = $user['id'];
-        $_SESSION['role_id']    = (int)$user['role_id'];
-        $_SESSION['role_name']  = $user['role_name'];
-        $_SESSION['user_name']  = $user['first_name'] . ' ' . $user['last_name'];
+        session_regenerate_id(true);
+
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['role_id'] = (int) $user['role_id'];
+        $_SESSION['role_name'] = $user['role_name'];
+        $_SESSION['user_name'] = $user['first_name'] . ' ' . $user['last_name'];
         $_SESSION['first_name'] = $user['first_name'];
-        
+
         header("Location: index.php");
         exit;
     } else {
@@ -105,7 +94,7 @@ if (!isset($_SESSION['user_id']) && $action !== 'login') {
     exit;
 }
 
-$roleId = (int)($_SESSION['role_id'] ?? 0);
+$roleId = (int) ($_SESSION['role_id'] ?? 0);
 
 // Startseiten-Weiterleitung: Je nach Rolle wird die passende Startseite geladen.
 if ($action === '') {
@@ -134,7 +123,7 @@ if ($action === 'hr_list' && !in_array($roleId, [Role::IT_MANAGER, Role::HR])) {
 // Synchronisation: Projekte von der ClickUp-API abrufen und in der Datenbank aktualisieren.
 if ($action === 'sync') {
     $importer = new \App\Services\ClickUpImport();
-    $count    = $importer->syncProjects();
+    $count = $importer->syncProjects();
     $_SESSION['success_msg'] = "$count Projekte synchronisiert!";
     header("Location: ?action=projects");
     exit;
@@ -150,7 +139,7 @@ if ($action === 'assign_user' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 // Prämie beantragen: Eine neue Prämie für eine Projektzuweisung anlegen.
 if ($action === 'store_bonus' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     // Betrag normalisieren: Komma als Dezimaltrennzeichen wird in einen Punkt umgewandelt.
-    $amount = (float)str_replace(',', '.', $_POST['amount']);
+    $amount = (float) str_replace(',', '.', $_POST['amount']);
     if (Bonus::create($_POST['assignment_id'], $amount, $_POST['comment'] ?? '', $_SESSION['user_id'])) {
         $_SESSION['success_msg'] = "Prämie erfolgreich beantragt!";
     }
@@ -162,14 +151,14 @@ if ($action === 'store_bonus' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 // Vier-Augen-Prinzip: Wer eine Prämie beantragt hat, darf sie nicht selbst freigeben.
 if ($action === 'update_bonus_status' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $bonus = Bonus::getById($_POST['bonus_id']);
-    
+
     if ($bonus && $bonus['created_by'] == $_SESSION['user_id']) {
         // Sicherheitsregel: Eigene Prämien können nicht selbst genehmigt werden.
         $_SESSION['error_msg'] = "Vier-Augen-Prinzip: Sie können keine Prämien freigeben, die Sie selbst beantragt haben.";
     } else {
         Bonus::processApproval($_POST['bonus_id'], $_SESSION['user_id'], ($_POST['action_type'] === 'approve'), $_POST['comment'] ?? '');
     }
-    
+
     header("Location: ?action=bonuses");
     exit;
 }
@@ -185,21 +174,21 @@ switch ($action) {
 
     case 'projects':
         // Alle aktiven Projekte für die IT-Manager-Übersicht abrufen.
-        $projects    = Project::getAll();
-        $viewModus   = 'manager'; // Modus für IT-Manager: zeigt Import-Button und Zuweisungsfunktion.
+        $projects = Project::getAll();
+        $viewModus = 'manager'; // Modus für IT-Manager: zeigt Import-Button und Zuweisungsfunktion.
         require_once __DIR__ . '/../views/projects.php';
         break;
 
     case 'my_projects':
         // Nur die Projekte laden, denen der angemeldete Projektmanager zugewiesen ist.
-        $projects    = Project::getByUserId($_SESSION['user_id']);
-        $viewModus   = 'my_projects'; // Modus für Projektmanager: zeigt nur eigene Projekte und Prämien-Detail.
+        $projects = Project::getByUserId($_SESSION['user_id']);
+        $viewModus = 'my_projects'; // Modus für Projektmanager: zeigt nur eigene Projekte und Prämien-Detail.
         require_once __DIR__ . '/../views/projects.php';
         break;
 
     case 'assign':
         // Projektdetails, zugewiesene Mitarbeiter und deren Prämien für die Zuweisungsseite laden.
-        $project       = Project::getById($_GET['project_id']);
+        $project = Project::getById($_GET['project_id']);
         $assignedUsers = Project::getAssignedUsers($_GET['project_id']);
         foreach ($assignedUsers as $key => $assignedEmployee) {
             // Prämien je Mitarbeiterzuweisung ergänzen.
@@ -222,8 +211,8 @@ switch ($action) {
             // Prämien nach Mitarbeiter gruppieren und Gesamtbetrag je Person berechnen.
             $groupedBonuses = [];
             foreach ($allBonuses as $bonus) {
-                $name                             = $bonus['last_name'] . ', ' . $bonus['first_name'];
-                $groupedBonuses[$name]['total']   = ($groupedBonuses[$name]['total'] ?? 0) + $bonus['amount'];
+                $name = $bonus['last_name'] . ', ' . $bonus['first_name'];
+                $groupedBonuses[$name]['total'] = ($groupedBonuses[$name]['total'] ?? 0) + $bonus['amount'];
                 $groupedBonuses[$name]['items'][] = $bonus;
             }
             $allBonuses = $groupedBonuses;

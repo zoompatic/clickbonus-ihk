@@ -1,6 +1,7 @@
 <?php
 // views/layouts/header.php
 // Dies ist der obere Teil jeder Seite: Logo, Navigation und Meldungen.
+use App\Models\Role;
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -33,19 +34,19 @@
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav ms-auto mb-lg-0 text-uppercase d-flex align-items-center gap-2" style="font-size: 0.75rem; font-weight: 600;">
                     
-                    <?php if ($roleId === 1): ?>
+                    <?php if ($roleId === Role::IT_MANAGER): ?>
                         <li class="nav-item"><a class="nav-link px-3" href="?action=projects">Projekte</a></li>
                     <?php endif; ?>
 
-                    <?php if ($roleId === 2): ?>
+                    <?php if ($roleId === Role::PROJECT_MANAGER): ?>
                         <li class="nav-item"><a class="nav-link px-3" href="?action=my_projects">Projekte</a></li>
                     <?php endif; ?>
 
-                    <?php if (in_array($roleId, [1, 2])): ?>
+                    <?php if (in_array($roleId, [Role::IT_MANAGER, Role::PROJECT_MANAGER])): ?>
                         <li class="nav-item"><a class="nav-link px-3" href="?action=bonuses">Freigaben</a></li>
                     <?php endif; ?>
 
-                    <?php if (in_array($roleId, [1, 3])): ?>
+                    <?php if (in_array($roleId, [Role::IT_MANAGER, Role::HR])): ?>
                         <li class="nav-item"><a class="nav-link px-3" href="?action=hr_list">HR-Liste</a></li>
                     <?php endif; ?>
 

@@ -3,24 +3,15 @@
 namespace App\Models;
 
 use App\Database;
+use App\Models\Status;
 use PDO;
 
-// Diese Hilfsklasse enthält Statuskonstanten für Prämien und Genehmigungen.
-// Die numerischen Werte entsprechen den IDs in der Datenbanktabelle 'approval_statuses'.
-class Status
-{
-    const PENDING  = 1; // Ausstehend: Prämie wurde beantragt und wartet auf Genehmigung.
-    const APPROVED = 2; // Genehmigt: Prämie wurde final freigegeben.
-    const REJECTED = 3; // Abgelehnt: Prämie wurde abgelehnt.
-}
 
 // Diese Klasse verwaltet alle Datenbankoperationen rund um Prämien.
-// Sie deckt das Erstellen, Abrufen und Genehmigen von Prämien ab.
 class Bonus
 {
     // Erstellt eine neue Prämie und legt gleichzeitig den ersten Genehmigungseintrag an.
-    // Beides wird in einer Transaktion ausgeführt, damit keine inkonsistenten Daten entstehen.
-    public static function create($assignmentId, $amount, $comment, $creatorUserId)
+       public static function create($assignmentId, $amount, $comment, $creatorUserId)
     {
         $database = Database::getConnection();
         try {
@@ -139,6 +130,11 @@ class Bonus
 
         // Statuswert anhand der Entscheidung des Benutzers auswählen.
         $statusId = $isApproved ? Status::APPROVED : Status::REJECTED;
+
+        // Standardkommentar setzen, wenn kein Kommentar angegeben wurde.
+        if (empty(trim($comment))) {
+            $comment = $isApproved ? 'Prämie genehmigt' : 'Prämie abgelehnt';
+        }
 
         $statement = $database->prepare("INSERT INTO approvals (bonus_id, user_id, approval_status_id, comment) VALUES (?, ?, ?, ?)");
         return $statement->execute([$bonusId, $userId, $statusId, $comment]);
