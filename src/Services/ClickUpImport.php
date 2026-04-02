@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Database;
-use App\Config; // NEU: Nutzt den zentralen Config-Helfer
+use App\Config;
 use Exception;
 
 // Diese Klasse dient als Schnittstelle zwischen diesem System und ClickUp.
@@ -14,23 +14,18 @@ class ClickUpImport
     private $listId;
     private $baseUrl = 'https://api.clickup.com/api/v2';
 
-    // Konstruktor: Lädt die Zugangsdaten aus der .env Datei.
     public function __construct()
     {
-        // Abrufen der Zugangsdaten über die Config-Klasse.
         $this->apiToken = Config::get('CLICKUP_TOKEN');
         $this->listId = Config::get('CLICKUP_LIST_ID');
     }
 
-    // Ruft Projektdaten von ClickUp ab und speichert diese in der Datenbank.
     public function syncProjects()
     {
-        // Sicherstellen, dass die Zugangsdaten überhaupt da sind
         if (!$this->apiToken || !$this->listId) {
             throw new Exception("Synchronisation nicht möglich: API-Token oder List-ID fehlen in der .env Datei.");
         }
 
-        // Projektdaten von der API abrufen.
         $url = $this->baseUrl . '/list/' . $this->listId . '/task?subtasks=false';
 
         $curlHandle = curl_init();
@@ -52,7 +47,6 @@ class ClickUpImport
         $dataPackage = json_decode($response, true);
         $tasks = $dataPackage['tasks'] ?? [];
 
-        // Projektdaten in die Datenbank schreiben.
         $database = Database::getConnection();
         $syncedCount = 0;
 

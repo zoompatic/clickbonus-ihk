@@ -1,6 +1,5 @@
 <?php
 // views/assign.php 
-// Diese Seite zeigt Details zu einem Projekt und erlaubt das Zuweisen von Mitarbeitern sowie das Beantragen von Prämien.
 ?>
 <div class="card bg-white">
     <div class="card-body p-4">

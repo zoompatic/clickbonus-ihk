@@ -1,9 +1,5 @@
 <?php
 // views/projects.php
-// Diese gemeinsame View zeigt Projekte an – sowohl für IT-Manager als auch für Projektmanager.
-// Der Anzeigemodus wird über die Variable $viewModus aus index.php gesteuert:
-//   'manager'    → IT-Manager-Ansicht mit ClickUp-Import-Button und "Mitarbeiter Zuweisen"
-//   'my_projects' → Projektmanager-Ansicht mit "Detail / Prämien"
 ?>
 <div class="card bg-white">
     <div class="card-body p-4">
@@ -19,7 +15,6 @@
             </div>
 
             <?php if ($viewModus === 'manager'): ?>
-                <!-- Import-Button ist nur für den IT-Manager sichtbar. -->
                 <a href="?action=sync" class="btn btn-outline-primary fw-bold text-uppercase">ClickUp Import</a>
             <?php endif; ?>
         </div>

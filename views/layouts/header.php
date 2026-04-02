@@ -1,6 +1,5 @@
 <?php
 // views/layouts/header.php
-// Dies ist der obere Teil jeder Seite: Logo, Navigation und Meldungen.
 use App\Models\Role;
 ?>
 <!DOCTYPE html>
@@ -11,9 +10,7 @@ use App\Models\Role;
     <title>ClickBonus | Monolith West</title>
     <link rel="icon" href="favicon.png" type="image/png">
     
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <!-- Eigene Styles (Overrides) -->
     <link rel="stylesheet" href="css/style.css?v=<?php echo time(); ?>">
 </head>
 <body>
@@ -50,7 +47,6 @@ use App\Models\Role;
                         <li class="nav-item"><a class="nav-link px-3" href="?action=hr_list">HR-Liste</a></li>
                     <?php endif; ?>
 
-                    <!-- Vertical divider for the layout (desktop only) -->
                     <li class="nav-item d-none d-lg-block">
                         <span class="text-secondary" style="border-left: 1px solid #444; height: 20px; display: inline-block; margin: 0 10px; vertical-align: middle;"></span>
                     </li>
@@ -72,7 +68,6 @@ use App\Models\Role;
 
 <main class="container py-2">
     
-    <!-- Meldungen -->
     <?php if (isset($_SESSION['error_msg'])): ?>
         <div class="alert alert-danger d-print-none" role="alert">
             <?php echo htmlspecialchars($_SESSION['error_msg']); unset($_SESSION['error_msg']); ?>

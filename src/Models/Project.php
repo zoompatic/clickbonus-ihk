@@ -9,7 +9,6 @@ use PDO;
 class Project
 {
 
-    // Abholung aller Projekte aus der Datenbank.
     public static function getAll()
     {
         $database = Database::getConnection();
@@ -17,7 +16,6 @@ class Project
         return $statement->fetchAll();
     }
 
-    // Abholung eines einzelnen Projekts anhand seiner ID.
     public static function getById($id)
     {
         $database = Database::getConnection();
@@ -26,7 +24,6 @@ class Project
         return $statement->fetch();
     }
 
-    // Abholung aller Mitarbeiter, die diesem Projekt bereits zugewiesen sind.
     public static function getAssignedUsers($projectId)
     {
         $database = Database::getConnection();
@@ -41,7 +38,6 @@ class Project
         return $statement->fetchAll();
     }
 
-    // Zuweisung eines Projekts zu einem User (speichert in project_assignments).
     public static function assignUser($projectId, $userId)
     {
         $database = Database::getConnection();
@@ -49,14 +45,13 @@ class Project
         $checkStatement = $database->prepare("SELECT id FROM project_assignments WHERE project_id = ? AND user_id = ?");
         $checkStatement->execute([$projectId, $userId]);
         if ($checkStatement->fetch()) {
-            return false; // Falls bereits zugewiesen.
+            return false;
         }
 
         $statement = $database->prepare("INSERT INTO project_assignments (project_id, user_id) VALUES (?, ?)");
         return $statement->execute([$projectId, $userId]);
     }
 
-    // Zählung aller aktiven Projekte für das Dashboard.
     public static function getTotalCount()
     {
         $database = Database::getConnection();
@@ -64,7 +59,6 @@ class Project
         return $statement->fetchColumn();
     }
 
-    // Abholung aller Projekte, denen ein bestimmter Benutzer zugewiesen ist.
     public static function getByUserId($userId)
     {
         $database = Database::getConnection();

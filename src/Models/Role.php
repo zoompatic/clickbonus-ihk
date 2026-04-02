@@ -3,7 +3,6 @@
 namespace App\Models;
 
 // Hilfsklasse mit Rollenkonstanten.
-// Die numerischen Werte entsprechen den IDs in der Datenbanktabelle 'roles'.
 class Role
 {
     const IT_MANAGER      = 1;

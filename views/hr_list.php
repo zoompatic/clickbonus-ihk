@@ -1,6 +1,5 @@
 <?php
 // views/hr_list.php
-// Diese Seite zeigt alle genehmigten Prämien für die HR-Abteilung zur Auszahlung.
 ?>
 <div class="card bg-white">
     <div class="card-body p-4">

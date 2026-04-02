@@ -9,8 +9,6 @@ use PDO;
 class User
 {
 
-    // Authentifizierung eines Benutzers mit E-Mail und Passwort.
-    // Prüfung, ob die Eingaben korrekt sind und ob der Benutzer die richtige Rolle hat.
     public static function authenticate($email, $password)
     {
         $database = Database::getConnection();
@@ -23,20 +21,17 @@ class User
         $statement->execute([$email]);
         $user = $statement->fetch();
 
-        // Prüfung der Berechtigung: Nur Manager und HR können sich anmelden.
         if ($user && (strtolower($user['role_name']) === 'mitarbeiter' || (int)$user['role_id'] === 4)) {
             return false;
         }
 
-        // Prüfung ob ein Passwort existiert und mit dem Hash übereinstimmt.
         if ($user && !empty($user['password']) && password_verify($password, $user['password'])) {
-            unset($user['password']); // Passwort aus dem Ergebnis entfernen, aus Sicherheitsgründen.
+            unset($user['password']);
             return $user;
         }
         return false;
     }
 
-    // Holt alle aktiven Benutzer aus der Datenbank.
     public static function getAllActive()
     {
         $database = Database::getConnection();
@@ -49,6 +44,4 @@ class User
         ");
         return $statement->fetchAll();
     }
-
-
 }
