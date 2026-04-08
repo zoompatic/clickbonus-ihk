@@ -1,11 +1,13 @@
 <?php
 // views/projects.php
+use App\Models\Role;
+$isITManager = ($_SESSION['role_id'] == Role::IT_MANAGER);
 ?>
 <div class="card bg-white">
     <div class="card-body p-4">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
             <div>
-                <?php if ($viewModus === 'manager'): ?>
+                <?php if ($isITManager): ?>
                     <h2 class="text-primary mb-1 text-uppercase fw-bold">Importierte Projekte</h2>
                     <span class="text-muted small">Hier siehst du alle Projekte, die aus ClickUp synchronisiert wurden.</span>
                 <?php else: ?>
@@ -14,7 +16,7 @@
                 <?php endif; ?>
             </div>
 
-            <?php if ($viewModus === 'manager'): ?>
+            <?php if ($isITManager): ?>
                 <a href="?action=sync" class="btn btn-outline-primary fw-bold text-uppercase">ClickUp Import</a>
             <?php endif; ?>
         </div>
@@ -50,7 +52,7 @@
                                 </td>
                                 <td class="text-end">
                                     <a href="?action=assign&project_id=<?php echo $project['id']; ?>" class="btn btn-primary btn-sm fw-bold">
-                                        <?php echo $viewModus === 'manager' ? 'Mitarbeiter Zuweisen' : 'Detail / Prämien'; ?>
+                                        <?php echo $isITManager ? 'Mitarbeiter Zuweisen' : 'Detail / Prämien'; ?>
                                     </a>
                                 </td>
                             </tr>
@@ -58,7 +60,7 @@
                     <?php else: ?>
                         <tr>
                             <td colspan="5" class="p-5 text-center text-muted">
-                                <?php echo $viewModus === 'manager' ? 'Keine Projekte gefunden. Bitte synchronisiere ClickUp!' : 'Keine Projekte zugewiesen.'; ?>
+                                <?php echo $isITManager ? 'Keine Projekte gefunden. Bitte synchronisiere ClickUp!' : 'Keine Projekte zugewiesen.'; ?>
                             </td>
                         </tr>
                     <?php endif; ?>

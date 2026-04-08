@@ -34,7 +34,6 @@ use App\Models\User;
 use App\Models\Project;
 use App\Models\Bonus;
 use App\Models\Role;
-use App\Models\Status;
 
 try {
     $database = Database::getConnection();
@@ -85,10 +84,8 @@ if (!isset($_SESSION['user_id']) && $action !== 'login') {
 $roleId = (int) ($_SESSION['role_id'] ?? 0);
 
 if ($action === '') {
-    if ($roleId === Role::IT_MANAGER) {
+    if (in_array($roleId, [Role::IT_MANAGER, Role::PROJECT_MANAGER])) {
         header("Location: ?action=projects");
-    } elseif ($roleId === Role::PROJECT_MANAGER) {
-        header("Location: ?action=my_projects");
     } elseif ($roleId === Role::HR) {
         header("Location: ?action=hr_list");
     }
@@ -149,14 +146,11 @@ switch ($action) {
         break;
 
     case 'projects':
-        $projects = Project::getAll();
-        $viewModus = 'manager';
-        require_once __DIR__ . '/../views/projects.php';
-        break;
-
-    case 'my_projects':
-        $projects = Project::getByUserId($_SESSION['user_id']);
-        $viewModus = 'my_projects';
+        if ($_SESSION['role_id'] == Role::IT_MANAGER) {
+            $projects = Project::getAll();
+        } else {
+            $projects = Project::getByUserId($_SESSION['user_id']);
+        }
         require_once __DIR__ . '/../views/projects.php';
         break;
 

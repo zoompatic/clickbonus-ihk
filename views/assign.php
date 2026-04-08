@@ -4,7 +4,7 @@
 <div class="card bg-white">
     <div class="card-body p-4">
         <div class="mb-4">
-            <a href="?action=<?php echo($_SESSION['role_id'] == 4) ? 'my_projects' : 'projects'; ?>" class="btn btn-outline-secondary btn-sm mb-3">&larr; ZURÜCK</a>
+            <a href="?action=projects" class="btn btn-outline-secondary btn-sm mb-3">&larr; ZURÜCK</a>
             <h1 class="text-primary mb-2 text-uppercase fw-bold">Projekt: <?php echo htmlspecialchars($project['name']); ?></h1>
             <div class="d-flex gap-4 text-muted">
                 <span><strong>Status:</strong> <?php echo htmlspecialchars($project['clickup_status']); ?></span>

@@ -31,12 +31,8 @@ use App\Models\Role;
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav ms-auto mb-lg-0 text-uppercase d-flex align-items-center gap-2" style="font-size: 0.75rem; font-weight: 600;">
                     
-                    <?php if ($roleId === Role::IT_MANAGER): ?>
+                    <?php if (in_array($roleId, [Role::IT_MANAGER, Role::PROJECT_MANAGER])): ?>
                         <li class="nav-item"><a class="nav-link px-3" href="?action=projects">Projekte</a></li>
-                    <?php endif; ?>
-
-                    <?php if ($roleId === Role::PROJECT_MANAGER): ?>
-                        <li class="nav-item"><a class="nav-link px-3" href="?action=my_projects">Projekte</a></li>
                     <?php endif; ?>
 
                     <?php if (in_array($roleId, [Role::IT_MANAGER, Role::PROJECT_MANAGER])): ?>
