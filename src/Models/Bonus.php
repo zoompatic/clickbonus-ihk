@@ -32,6 +32,29 @@ class Bonus
         }
     }
 
+    public static function createManual($targetUserId, $amount, $comment, $creatorUserId)
+    {
+        $database = Database::getConnection();
+        try {
+            $database->beginTransaction();
+
+            $statement = $database->prepare("INSERT INTO bonuses (target_user_id, amount, comment, created_by) VALUES (?, ?, ?, ?)");
+            $statement->execute([$targetUserId, $amount, $comment, $creatorUserId]);
+            $bonusId = $database->lastInsertId();
+
+            $approvalStatement = $database->prepare("INSERT INTO approvals (bonus_id, user_id, approval_status_id, comment) VALUES (?, ?, ?, ?)");
+            $approvalStatement->execute([$bonusId, $creatorUserId, Status::PENDING, $comment]);
+
+            $database->commit();
+            return true;
+        }
+        catch (\Exception $error) {
+            $database->rollBack();
+            error_log("Fehler beim Erstellen der manuellen Prämie: " . $error->getMessage());
+            return false;
+        }
+    }
+
     public static function getById($id)
     {
         $database = Database::getConnection();
@@ -53,19 +76,22 @@ class Bonus
         return $statement->fetchAll();
     }
 
-    public static function getAllWithDetails($managerId = null)
+    public static function getAllWithDetails($managerId = null, $onlyManual = false)
     {
         $database = Database::getConnection();
         $sql = "
-            SELECT b.id as bonus_id, b.amount, b.comment, b.created_at,
-                   u.first_name, u.last_name, p.name as project_name, p.id as project_id,
+            SELECT b.id as bonus_id, b.amount, b.comment, b.created_at, b.project_assignment_id,
+                   COALESCE(u.first_name, u_man.first_name) as first_name, 
+                   COALESCE(u.last_name, u_man.last_name) as last_name, 
+                   COALESCE(p.name, 'Manuelle Prämie') as project_name, p.id as project_id,
                    req_u.first_name as req_first_name, req_u.last_name as req_last_name, req_u.role_id as req_role_id,
                    v.current_status, v.current_status_id, b.created_by
             FROM bonuses b
             JOIN view_bonus_status v ON b.id = v.bonus_id
-            JOIN project_assignments pa ON b.project_assignment_id = pa.id
-            JOIN users u ON pa.user_id = u.id
-            JOIN projects p ON pa.project_id = p.id
+            LEFT JOIN project_assignments pa ON b.project_assignment_id = pa.id
+            LEFT JOIN users u ON pa.user_id = u.id
+            LEFT JOIN projects p ON pa.project_id = p.id
+            LEFT JOIN users u_man ON b.target_user_id = u_man.id
             LEFT JOIN users req_u ON b.created_by = req_u.id
             WHERE b.deleted_at IS NULL 
             AND v.current_status_id = " . Status::PENDING . "
@@ -75,6 +101,10 @@ class Bonus
         if ($managerId !== null) {
             $sql .= " AND p.id IN (SELECT project_id FROM project_assignments WHERE user_id = :mid)";
             $params['mid'] = $managerId;
+        }
+
+        if ($onlyManual) {
+            $sql .= " AND b.project_assignment_id IS NULL";
         }
         
         $sql .= " ORDER BY b.created_at DESC";
@@ -88,18 +118,23 @@ class Bonus
     {
         $database = Database::getConnection();
 
-        $sql = "SELECT b.*, u.first_name, u.last_name, p.name as project_name, v.last_update as approved_at
+        $sql = "SELECT b.*, 
+                COALESCE(u.first_name, u_man.first_name) as first_name, 
+                COALESCE(u.last_name, u_man.last_name) as last_name, 
+                COALESCE(p.name, 'Manuelle Prämie') as project_name, 
+                v.last_update as approved_at
                 FROM bonuses b 
                 JOIN view_bonus_status v ON b.id = v.bonus_id
-                JOIN project_assignments pa ON b.project_assignment_id = pa.id 
-                JOIN users u ON pa.user_id = u.id 
-                JOIN projects p ON pa.project_id = p.id 
+                LEFT JOIN project_assignments pa ON b.project_assignment_id = pa.id 
+                LEFT JOIN users u ON pa.user_id = u.id 
+                LEFT JOIN projects p ON pa.project_id = p.id 
+                LEFT JOIN users u_man ON b.target_user_id = u_man.id
                 WHERE b.deleted_at IS NULL AND v.current_status_id = " . Status::APPROVED;
 
         $params = [];
 
         if ($limitToUserId) {
-            $sql .= " AND pa.user_id = :uid";
+            $sql .= " AND (pa.user_id = :uid OR b.target_user_id = :uid)";
             $params['uid'] = $limitToUserId;
         }
         if ($startDate) {
@@ -136,14 +171,16 @@ class Bonus
         $sql = "
             SELECT a.id, a.created_at, a.comment, a.approval_status_id,
                    u_actor.first_name as actor_first, u_actor.last_name as actor_last,
-                   b.amount, p.name as project_name,
-                   u_target.first_name as target_first, u_target.last_name as target_last
+                   b.amount, COALESCE(p.name, 'Manuelle Prämie') as project_name,
+                   COALESCE(u_target.first_name, u_man.first_name) as target_first, 
+                   COALESCE(u_target.last_name, u_man.last_name) as target_last
             FROM approvals a
             JOIN bonuses b ON a.bonus_id = b.id
             JOIN users u_actor ON a.user_id = u_actor.id
-            JOIN project_assignments pa ON b.project_assignment_id = pa.id
-            JOIN users u_target ON pa.user_id = u_target.id
-            JOIN projects p ON pa.project_id = p.id
+            LEFT JOIN project_assignments pa ON b.project_assignment_id = pa.id
+            LEFT JOIN users u_target ON pa.user_id = u_target.id
+            LEFT JOIN projects p ON pa.project_id = p.id
+            LEFT JOIN users u_man ON b.target_user_id = u_man.id
             ORDER BY a.created_at DESC
         ";
         return $database->query($sql)->fetchAll();

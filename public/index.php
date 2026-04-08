@@ -92,7 +92,7 @@ if ($action === '' || $action === 'index') {
     exit;
 }
 
-if ($roleId === Role::HR && !in_array($action, ['hr_list', 'profile', 'update_profile_password', 'logout'])) {
+if ($roleId === Role::HR && !in_array($action, ['hr_list', 'profile', 'update_profile_password', 'logout', 'bonuses', 'update_bonus_status'])) {
     header("Location: ?action=hr_list");
     exit;
 }
@@ -182,6 +182,19 @@ if ($action === 'store_bonus' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
+if ($action === 'store_manual_bonus' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    if ($_SESSION['role_id'] == Role::IT_MANAGER) {
+        $ok = Bonus::createManual($_POST['target_user_id'], str_replace(',', '.', $_POST['amount']), $_POST['comment'], $_SESSION['user_id']);
+        if ($ok) {
+            $_SESSION['success_msg'] = "Manuelle Prämie erfolgreich vergeben.";
+        } else {
+            $_SESSION['error_msg'] = "Fehler beim Erstellen der Prämie.";
+        }
+    }
+    header("Location: ?action=bonuses");
+    exit;
+}
+
 if ($action === 'update_bonus_status' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $bonus = Bonus::getById($_POST['bonus_id']);
 
@@ -239,6 +252,15 @@ switch ($action) {
         require_once __DIR__ . '/../views/profile.php';
         break;
 
+    case 'manual_bonus':
+        if ($_SESSION['role_id'] == Role::IT_MANAGER) {
+            $allUsers = User::getAllActive();
+            require_once __DIR__ . '/../views/manual_bonus.php';
+        } else {
+            header("Location: index.php");
+        }
+        break;
+
     case 'history':
         if ($_SESSION['role_id'] == Role::IT_MANAGER) {
             $auditLogs = Bonus::getAuditLog();
@@ -261,7 +283,11 @@ switch ($action) {
     case 'bonuses':
         if ($_SESSION['role_id'] == Role::PROJECT_MANAGER) {
             $allBonuses = Bonus::getAllWithDetails($_SESSION['user_id']);
+        } elseif ($_SESSION['role_id'] == Role::HR) {
+            // HR sees ONLY manual bonuses
+            $allBonuses = Bonus::getAllWithDetails(null, true);
         } else {
+            // IT Manager sees everything
             $allBonuses = Bonus::getAllWithDetails();
         }
         $itManagers = Database::getConnection()->query("SELECT id, first_name, last_name FROM users WHERE role_id = " . Role::IT_MANAGER . " AND deleted_at IS NULL")->fetchAll();

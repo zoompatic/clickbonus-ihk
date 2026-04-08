@@ -2,12 +2,9 @@
 <div class="card bg-white">
     <div class="card-body p-4">
         
-        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3 d-print-none">
-            <div>
-                <h2 class="text-primary mb-1 text-uppercase fw-bold">Audit-Log (Historie)</h2>
-                <span class="text-muted small">Chronologische Übersicht aller Prämien-Aktivitäten im System.</span>
-            </div>
-            <button onclick="window.print();" class="btn btn-outline-dark fw-bold text-uppercase">🖨️ Drucken / PDF</button>
+        <div class="mb-4">
+            <h2 class="text-primary mb-1 text-uppercase fw-bold">Audit-Log (Historie)</h2>
+            <span class="text-muted small">Chronologische Übersicht aller Prämien-Aktivitäten im System.</span>
         </div>
 
         <div class="table-responsive">

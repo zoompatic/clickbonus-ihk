@@ -67,31 +67,36 @@
                                         <?php if ($bonus['created_by'] == $_SESSION['user_id']): ?>
                                             <?php
                                                 $waitingForText = 'Anderer Administrator';
-                                                if ($bonus['req_role_id'] == 1) { // IT_MANAGER has ID 1
-                                                    $pmStmt = \App\Database::getConnection()->prepare("
-                                                        SELECT u.first_name, u.last_name 
-                                                        FROM project_assignments pa 
-                                                        JOIN users u ON pa.user_id = u.id 
-                                                        WHERE pa.project_id = ? AND u.role_id = 2
-                                                    ");
-                                                    $pmStmt->execute([$bonus['project_id']]);
-                                                    $pms = $pmStmt->fetchAll();
-                                                    
-                                                    if (!empty($pms)) {
-                                                        $pmNames = array_map(function($u) { return $u['first_name'] . ' ' . $u['last_name']; }, $pms);
-                                                        $waitingForText = implode(' oder ', $pmNames);
-                                                    } else {
-                                                        $waitingForText = 'Zugewiesener Projektleiter';
-                                                    }
+                                                // Manuelle Prämie -> HR genehmigt
+                                                if (empty($bonus['project_assignment_id'])) {
+                                                    $waitingForText = 'HR-Abteilung';
                                                 } else {
-                                                    $approvers = [];
-                                                    foreach ($itManagers as $manager) {
-                                                        if ($manager['id'] != $bonus['created_by']) {
-                                                            $approvers[] = $manager['first_name'] . ' ' . $manager['last_name'];
+                                                    if ($bonus['req_role_id'] == 1) { // IT_MANAGER has ID 1
+                                                        $pmStmt = \App\Database::getConnection()->prepare("
+                                                            SELECT u.first_name, u.last_name 
+                                                            FROM project_assignments pa 
+                                                            JOIN users u ON pa.user_id = u.id 
+                                                            WHERE pa.project_id = ? AND u.role_id = 2
+                                                        ");
+                                                        $pmStmt->execute([$bonus['project_id']]);
+                                                        $pms = $pmStmt->fetchAll();
+                                                        
+                                                        if (!empty($pms)) {
+                                                            $pmNames = array_map(function($u) { return $u['first_name'] . ' ' . $u['last_name']; }, $pms);
+                                                            $waitingForText = implode(' oder ', $pmNames);
+                                                        } else {
+                                                            $waitingForText = 'Zugewiesener Projektleiter';
                                                         }
-                                                    }
-                                                    if (!empty($approvers)) {
-                                                        $waitingForText = implode(' oder ', $approvers);
+                                                    } else {
+                                                        $approvers = [];
+                                                        foreach ($itManagers as $manager) {
+                                                            if ($manager['id'] != $bonus['created_by']) {
+                                                                $approvers[] = $manager['first_name'] . ' ' . $manager['last_name'];
+                                                            }
+                                                        }
+                                                        if (!empty($approvers)) {
+                                                            $waitingForText = implode(' oder ', $approvers);
+                                                        }
                                                     }
                                                 }
                                             ?>

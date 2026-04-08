@@ -40,11 +40,13 @@ use App\Models\Role;
                             <li class="nav-item"><a class="nav-link px-3" href="?action=projects">Projekte</a></li>
                         <?php endif; ?>
 
-                        <?php if (in_array($roleId, [Role::IT_MANAGER, Role::PROJECT_MANAGER])): ?>
+                        <?php if (in_array($roleId, [Role::IT_MANAGER, Role::PROJECT_MANAGER, Role::HR])): ?>
                             <?php 
                                 $pendingCount = 0;
                                 if ($roleId == Role::PROJECT_MANAGER) {
                                     $pendingCount = count(\App\Models\Bonus::getAllWithDetails($_SESSION['user_id']));
+                                } elseif ($roleId == Role::HR) {
+                                    $pendingCount = count(\App\Models\Bonus::getAllWithDetails(null, true));
                                 } else {
                                     $pendingCount = count(\App\Models\Bonus::getAllWithDetails());
                                 }
@@ -64,6 +66,7 @@ use App\Models\Role;
                         <?php endif; ?>
 
                         <?php if ($roleId === Role::IT_MANAGER): ?>
+                            <li class="nav-item text-nowrap"><a class="nav-link px-3" href="?action=manual_bonus">Freie Prämie</a></li>
                             <li class="nav-item"><a class="nav-link px-3" href="?action=history">Historie</a></li>
                             <li class="nav-item text-nowrap"><a class="nav-link px-3" href="?action=users">Benutzer</a></li>
                         <?php endif; ?>

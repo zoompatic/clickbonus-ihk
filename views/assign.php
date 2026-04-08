@@ -67,6 +67,30 @@
                                     </div>
                                     <button type="submit" class="btn btn-primary fw-bold">BEANTRAGEN</button>
                                 </form>
+
+                                <?php $pastBonuses = \App\Models\Bonus::getForAssignment($assignedEmployee['assignment_id']); ?>
+                                <?php if (!empty($pastBonuses)): ?>
+                                    <div class="mt-3 pt-3 border-top">
+                                        <span class="d-block small fw-bold text-uppercase text-muted mb-2">Bisherige Prämien in diesem Projekt:</span>
+                                        <ul class="list-group list-group-flush mb-0">
+                                            <?php foreach ($pastBonuses as $pastBonus): ?>
+                                                <li class="list-group-item bg-transparent px-0 py-1 d-flex justify-content-between align-items-center border-0 small">
+                                                    <div>
+                                                        <span class="fw-bold"><?php echo number_format($pastBonus['amount'], 2, ',', '.'); ?> €</span>
+                                                        <span class="text-muted d-block" style="font-size: 0.75rem;"><?php echo htmlspecialchars($pastBonus['comment']); ?></span>
+                                                    </div>
+                                                    <?php
+                                                        $badgeClass = 'bg-secondary';
+                                                        if ($pastBonus['current_status'] == 'Beantragt') $badgeClass = 'bg-warning text-dark';
+                                                        if ($pastBonus['current_status'] == 'Genehmigt') $badgeClass = 'bg-success';
+                                                        if ($pastBonus['current_status'] == 'Abgelehnt') $badgeClass = 'bg-danger';
+                                                    ?>
+                                                    <span class="badge <?php echo $badgeClass; ?>"><?php echo htmlspecialchars($pastBonus['current_status']); ?></span>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     <?php endforeach; ?>
