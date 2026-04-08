@@ -53,13 +53,13 @@ class Bonus
         return $statement->fetchAll();
     }
 
-    public static function getAllWithDetails()
+    public static function getAllWithDetails($managerId = null)
     {
         $database = Database::getConnection();
         $sql = "
             SELECT b.id as bonus_id, b.amount, b.comment, b.created_at,
-                   u.first_name, u.last_name, p.name as project_name,
-                   req_u.first_name as req_first_name, req_u.last_name as req_last_name,
+                   u.first_name, u.last_name, p.name as project_name, p.id as project_id,
+                   req_u.first_name as req_first_name, req_u.last_name as req_last_name, req_u.role_id as req_role_id,
                    v.current_status, v.current_status_id, b.created_by
             FROM bonuses b
             JOIN view_bonus_status v ON b.id = v.bonus_id
@@ -69,9 +69,19 @@ class Bonus
             LEFT JOIN users req_u ON b.created_by = req_u.id
             WHERE b.deleted_at IS NULL 
             AND v.current_status_id = " . Status::PENDING . "
-            ORDER BY b.created_at DESC
         ";
-        return $database->query($sql)->fetchAll();
+        
+        $params = [];
+        if ($managerId !== null) {
+            $sql .= " AND p.id IN (SELECT project_id FROM project_assignments WHERE user_id = :mid)";
+            $params['mid'] = $managerId;
+        }
+        
+        $sql .= " ORDER BY b.created_at DESC";
+
+        $statement = $database->prepare($sql);
+        $statement->execute($params);
+        return $statement->fetchAll();
     }
 
     public static function getFullyApproved($limitToUserId = null, $startDate = null, $endDate = null)
@@ -118,5 +128,24 @@ class Bonus
 
         $statement = $database->prepare("INSERT INTO approvals (bonus_id, user_id, approval_status_id, comment) VALUES (?, ?, ?, ?)");
         return $statement->execute([$bonusId, $userId, $statusId, $comment]);
+    }
+
+    public static function getAuditLog()
+    {
+        $database = Database::getConnection();
+        $sql = "
+            SELECT a.id, a.created_at, a.comment, a.approval_status_id,
+                   u_actor.first_name as actor_first, u_actor.last_name as actor_last,
+                   b.amount, p.name as project_name,
+                   u_target.first_name as target_first, u_target.last_name as target_last
+            FROM approvals a
+            JOIN bonuses b ON a.bonus_id = b.id
+            JOIN users u_actor ON a.user_id = u_actor.id
+            JOIN project_assignments pa ON b.project_assignment_id = pa.id
+            JOIN users u_target ON pa.user_id = u_target.id
+            JOIN projects p ON pa.project_id = p.id
+            ORDER BY a.created_at DESC
+        ";
+        return $database->query($sql)->fetchAll();
     }
 }

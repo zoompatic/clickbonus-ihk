@@ -83,7 +83,7 @@ if (!isset($_SESSION['user_id']) && $action !== 'login') {
 
 $roleId = (int) ($_SESSION['role_id'] ?? 0);
 
-if ($action === '') {
+if ($action === '' || $action === 'index') {
     if (in_array($roleId, [Role::IT_MANAGER, Role::PROJECT_MANAGER])) {
         header("Location: ?action=projects");
     } elseif ($roleId === Role::HR) {
@@ -92,7 +92,7 @@ if ($action === '') {
     exit;
 }
 
-if ($roleId === Role::HR && !in_array($action, ['hr_list', 'logout'])) {
+if ($roleId === Role::HR && !in_array($action, ['hr_list', 'profile', 'update_profile_password', 'logout'])) {
     header("Location: ?action=hr_list");
     exit;
 }
@@ -107,6 +107,63 @@ if ($action === 'sync') {
     $count = $importer->syncProjects();
     $_SESSION['success_msg'] = "$count Projekte synchronisiert!";
     header("Location: ?action=projects");
+    exit;
+}
+
+if ($action === 'delete_user' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    if ($_SESSION['role_id'] == Role::IT_MANAGER && $_POST['user_id'] != $_SESSION['user_id']) {
+        User::delete($_POST['user_id']);
+        $_SESSION['success_msg'] = "Benutzer wurde gelöscht.";
+    }
+    header("Location: ?action=users");
+    exit;
+}
+
+if ($action === 'update_user' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    if ($_SESSION['role_id'] == Role::IT_MANAGER) {
+        $ok = User::update($_POST['user_id'], $_POST['role_id'], $_POST['first_name'], $_POST['last_name'], $_POST['email'], $_POST['password'] ?? '');
+        if ($ok) {
+            $_SESSION['success_msg'] = "Benutzer wurde erfolgreich aktualisiert!";
+        } else {
+            $_SESSION['error_msg'] = "Fehler beim Aktualisieren.";
+        }
+    }
+    header("Location: ?action=users");
+    exit;
+}
+
+if ($action === 'update_profile_password' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $oldPassword = $_POST['old_password'] ?? '';
+    $newPassword = $_POST['new_password'] ?? '';
+    $confirmPassword = $_POST['confirm_password'] ?? '';
+
+    if ($newPassword !== $confirmPassword) {
+        $_SESSION['error_msg'] = "Das neue Passwort und die Wiederholung stimmen nicht überein.";
+        header("Location: ?action=profile");
+        exit;
+    }
+
+    if (User::verifyPasswordById($_SESSION['user_id'], $oldPassword)) {
+        User::updatePassword($_SESSION['user_id'], $newPassword);
+        $_SESSION['success_msg'] = "Passwort wurde erfolgreich geändert.";
+        header("Location: ?action=profile");
+    } else {
+        $_SESSION['error_msg'] = "Das alte Passwort ist nicht korrekt.";
+        header("Location: ?action=profile");
+    }
+    exit;
+}
+
+if ($action === 'store_user' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    if ($_SESSION['role_id'] == Role::IT_MANAGER) {
+        $ok = User::create($_POST['role_id'], $_POST['first_name'], $_POST['last_name'], $_POST['email'], $_POST['password'] ?? '');
+        if ($ok) {
+            $_SESSION['success_msg'] = "Benutzer " . htmlspecialchars($_POST['first_name'] . ' ' . $_POST['last_name']) . " erfolgreich angelegt!";
+        } else {
+            $_SESSION['error_msg'] = "Fehler beim Anlegen des Benutzers (Evtl. existiert die E-Mail bereits).";
+        }
+    }
+    header("Location: ?action=users");
     exit;
 }
 
@@ -154,6 +211,43 @@ switch ($action) {
         require_once __DIR__ . '/../views/projects.php';
         break;
 
+    case 'users':
+        if ($_SESSION['role_id'] == Role::IT_MANAGER) {
+            $allUsers = User::getAllActive();
+            $allRoles = Role::getAllRoles();
+            require_once __DIR__ . '/../views/users.php';
+        } else {
+            header("Location: index.php");
+        }
+        break;
+
+    case 'edit_user':
+        if ($_SESSION['role_id'] == Role::IT_MANAGER && isset($_GET['id'])) {
+            $editUser = User::getById($_GET['id']);
+            $allRoles = Role::getAllRoles();
+            if ($editUser) {
+                require_once __DIR__ . '/../views/user_edit.php';
+            } else {
+                header("Location: ?action=users");
+            }
+        } else {
+            header("Location: index.php");
+        }
+        break;
+
+    case 'profile':
+        require_once __DIR__ . '/../views/profile.php';
+        break;
+
+    case 'history':
+        if ($_SESSION['role_id'] == Role::IT_MANAGER) {
+            $auditLogs = Bonus::getAuditLog();
+            require_once __DIR__ . '/../views/history.php';
+        } else {
+            header("Location: index.php");
+        }
+        break;
+
     case 'assign':
         $project = Project::getById($_GET['project_id']);
         $assignedUsers = Project::getAssignedUsers($_GET['project_id']);
@@ -165,7 +259,12 @@ switch ($action) {
         break;
 
     case 'bonuses':
-        $allBonuses = Bonus::getAllWithDetails();
+        if ($_SESSION['role_id'] == Role::PROJECT_MANAGER) {
+            $allBonuses = Bonus::getAllWithDetails($_SESSION['user_id']);
+        } else {
+            $allBonuses = Bonus::getAllWithDetails();
+        }
+        $itManagers = Database::getConnection()->query("SELECT id, first_name, last_name FROM users WHERE role_id = " . Role::IT_MANAGER . " AND deleted_at IS NULL")->fetchAll();
         require_once __DIR__ . '/../views/bonuses.php';
         break;
 

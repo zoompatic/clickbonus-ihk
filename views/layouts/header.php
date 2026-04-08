@@ -4,73 +4,105 @@ use App\Models\Role;
 ?>
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ClickBonus | Monolith West</title>
     <link rel="icon" href="favicon.png" type="image/png">
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.css?v=<?php echo time(); ?>">
 </head>
+
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark d-print-none">
-    <div class="container">
-        <a class="navbar-brand fw-bold mb-0 h1" href="index.php">
-            Click<span class="text-secondary fw-light">Bonus</span>
-        </a>
-        
-        <?php if (isset($_SESSION['user_id'])): ?>
-            <?php $roleId = (int)($_SESSION['role_id'] ?? 0); ?>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="mainNav">
-                <ul class="navbar-nav ms-auto mb-lg-0 text-uppercase d-flex align-items-center gap-2" style="font-size: 0.75rem; font-weight: 600;">
-                    
-                    <?php if (in_array($roleId, [Role::IT_MANAGER, Role::PROJECT_MANAGER])): ?>
-                        <li class="nav-item"><a class="nav-link px-3" href="?action=projects">Projekte</a></li>
-                    <?php endif; ?>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-print-none">
+        <div class="container">
+            <a class="navbar-brand fw-bold mb-0 h1" href="index.php">
+                Click<span class="text-secondary fw-light">Bonus</span>
+            </a>
 
-                    <?php if (in_array($roleId, [Role::IT_MANAGER, Role::PROJECT_MANAGER])): ?>
-                        <li class="nav-item"><a class="nav-link px-3" href="?action=bonuses">Freigaben</a></li>
-                    <?php endif; ?>
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <?php $roleId = (int) ($_SESSION['role_id'] ?? 0); ?>
 
-                    <?php if (in_array($roleId, [Role::IT_MANAGER, Role::HR])): ?>
-                        <li class="nav-item"><a class="nav-link px-3" href="?action=hr_list">HR-Liste</a></li>
-                    <?php endif; ?>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                    aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-                    <li class="nav-item d-none d-lg-block">
-                        <span class="text-secondary" style="border-left: 1px solid #444; height: 20px; display: inline-block; margin: 0 10px; vertical-align: middle;"></span>
-                    </li>
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav ms-auto mb-lg-0 text-uppercase d-flex align-items-center gap-2"
+                        style="font-size: 0.75rem; font-weight: 600;">
 
-                    <?php 
+                        <?php if (in_array($roleId, [Role::IT_MANAGER, Role::PROJECT_MANAGER])): ?>
+                            <li class="nav-item"><a class="nav-link px-3" href="?action=projects">Projekte</a></li>
+                        <?php endif; ?>
+
+                        <?php if (in_array($roleId, [Role::IT_MANAGER, Role::PROJECT_MANAGER])): ?>
+                            <?php 
+                                $pendingCount = 0;
+                                if ($roleId == Role::PROJECT_MANAGER) {
+                                    $pendingCount = count(\App\Models\Bonus::getAllWithDetails($_SESSION['user_id']));
+                                } else {
+                                    $pendingCount = count(\App\Models\Bonus::getAllWithDetails());
+                                }
+                            ?>
+                            <li class="nav-item">
+                                <a class="nav-link px-3 d-flex align-items-center gap-2" href="?action=bonuses">
+                                    Wartend
+                                    <?php if ($pendingCount > 0): ?>
+                                        <span class="badge bg-danger rounded-pill"><?php echo $pendingCount; ?></span>
+                                    <?php endif; ?>
+                                </a>
+                            </li>
+                        <?php endif; ?>
+
+                        <?php if (in_array($roleId, [Role::IT_MANAGER, Role::HR])): ?>
+                            <li class="nav-item"><a class="nav-link px-3" href="?action=hr_list">HR-Liste</a></li>
+                        <?php endif; ?>
+
+                        <?php if ($roleId === Role::IT_MANAGER): ?>
+                            <li class="nav-item"><a class="nav-link px-3" href="?action=history">Historie</a></li>
+                            <li class="nav-item text-nowrap"><a class="nav-link px-3" href="?action=users">Benutzer</a></li>
+                        <?php endif; ?>
+
+                        <li class="nav-item d-none d-lg-block">
+                            <span class="text-secondary"
+                                style="border-left: 1px solid #444; height: 20px; display: inline-block; margin: 0 10px; vertical-align: middle;"></span>
+                        </li>
+
+                        <?php
                         $displayName = $_SESSION['first_name'] ?? explode(' ', $_SESSION['user_name'] ?? '')[0];
                         $displayRole = $_SESSION['role_name'] ?? 'User';
-                    ?>
-                    <li class="nav-item">
-                        <a href="?action=logout" class="nav-link text-uppercase" style="color: #ffcccc !important;">
-                            Logout (<span class="fw-bold"><?php echo htmlspecialchars($displayName); ?></span> | <span style="font-size: 0.65rem;"><?php echo htmlspecialchars($displayRole); ?></span>)
-                        </a>
-                    </li>
-                </ul>
+                        ?>
+                        <li class="nav-item">
+                            <a href="?action=profile" class="nav-link text-uppercase text-light">Mein Profil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="?action=logout" class="nav-link text-uppercase" style="color: #ffcccc !important;">
+                                Logout (<span class="fw-bold"><?php echo htmlspecialchars($displayName); ?></span> | <span
+                                    style="font-size: 0.65rem;"><?php echo htmlspecialchars($displayRole); ?></span>)
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            <?php endif; ?>
+        </div>
+    </nav>
+
+    <main class="container py-2">
+
+        <?php if (isset($_SESSION['error_msg'])): ?>
+            <div class="alert alert-danger d-print-none" role="alert">
+                <?php echo htmlspecialchars($_SESSION['error_msg']);
+                unset($_SESSION['error_msg']); ?>
             </div>
         <?php endif; ?>
-    </div>
-</nav>
-
-<main class="container py-2">
-    
-    <?php if (isset($_SESSION['error_msg'])): ?>
-        <div class="alert alert-danger d-print-none" role="alert">
-            <?php echo htmlspecialchars($_SESSION['error_msg']); unset($_SESSION['error_msg']); ?>
-        </div>
-    <?php endif; ?>
-    <?php if (isset($_SESSION['success_msg'])): ?>
-        <div class="alert alert-success d-print-none" role="alert">
-            <?php echo htmlspecialchars($_SESSION['success_msg']); unset($_SESSION['success_msg']); ?>
-        </div>
-    <?php endif; ?>
+        <?php if (isset($_SESSION['success_msg'])): ?>
+            <div class="alert alert-success d-print-none" role="alert">
+                <?php echo htmlspecialchars($_SESSION['success_msg']);
+                unset($_SESSION['success_msg']); ?>
+            </div>
+        <?php endif; ?>
