@@ -20,7 +20,7 @@ class Bonus
             $bonusId = $database->lastInsertId();
 
             $approvalStatement = $database->prepare("INSERT INTO approvals (bonus_id, user_id, approval_status_id, comment) VALUES (?, ?, ?, ?)");
-            $approvalStatement->execute([$bonusId, $creatorUserId, Status::PENDING, "Prämie beantragt"]);
+            $approvalStatement->execute([$bonusId, $creatorUserId, Status::PENDING, $comment]);
 
             $database->commit();
             return true;
@@ -169,7 +169,7 @@ class Bonus
     {
         $database = Database::getConnection();
         $sql = "
-            SELECT a.id, a.created_at, a.comment, a.approval_status_id,
+            SELECT a.id, a.created_at, a.comment, a.approval_status_id, b.comment as bonus_comment,
                    u_actor.first_name as actor_first, u_actor.last_name as actor_last,
                    b.amount, COALESCE(p.name, 'Manuelle Prämie') as project_name,
                    COALESCE(u_target.first_name, u_man.first_name) as target_first, 

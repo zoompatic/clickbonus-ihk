@@ -103,20 +103,16 @@
                                             <span class="text-muted small fw-bold">Wartet auf<br><?php echo htmlspecialchars($waitingForText); ?></span>
                                         <?php else: ?>
                                             <div class="d-flex flex-column gap-2 align-items-end">
-                                                <form method="POST" action="?action=update_bonus_status" class="w-100" style="max-width: 140px;">
+                                                <form method="POST" action="?action=update_bonus_status" class="w-100" style="max-width: 160px;">
                                                     <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                                                     <input type="hidden" name="bonus_id" value="<?php echo $bonus['bonus_id']; ?>">
-                                                    <input type="hidden" name="action_type" value="approve">
-                                                    <button type="submit" class="btn btn-success btn-sm w-100 fw-bold">FREIGEBEN</button>
-                                                </form>
-
-                                                <form method="POST" action="?action=update_bonus_status" class="w-100 mt-1" style="max-width: 140px;">
-                                                    <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
-                                                    <input type="hidden" name="bonus_id" value="<?php echo $bonus['bonus_id']; ?>">
-                                                    <input type="hidden" name="action_type" value="reject">
-                                                    <div class="input-group input-group-sm">
-                                                        <input type="text" name="comment" class="form-control" placeholder="Grund..." required>
-                                                        <button type="submit" class="btn btn-primary" title="Ablehnen">❌</button>
+                                                    
+                                                    <div class="mb-1">
+                                                        <input type="text" name="comment" class="form-control form-control-sm" placeholder="Begründung (Pflichtfeld)" required>
+                                                    </div>
+                                                    <div class="d-flex gap-1">
+                                                        <button type="submit" name="action_type" value="approve" class="btn btn-success btn-sm flex-grow-1 fw-bold">FREIGEBEN</button>
+                                                        <button type="submit" name="action_type" value="reject" class="btn btn-primary btn-sm fw-bold px-2" title="Ablehnen">❌</button>
                                                     </div>
                                                 </form>
                                             </div>
