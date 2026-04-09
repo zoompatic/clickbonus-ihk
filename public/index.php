@@ -183,7 +183,7 @@ if ($action === 'store_bonus' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 if ($action === 'store_manual_bonus' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    if ($_SESSION['role_id'] == Role::IT_MANAGER) {
+    if (in_array($_SESSION['role_id'], [Role::IT_MANAGER, Role::PROJECT_MANAGER])) {
         $ok = Bonus::createManual($_POST['target_user_id'], str_replace(',', '.', $_POST['amount']), $_POST['comment'], $_SESSION['user_id']);
         if ($ok) {
             $_SESSION['success_msg'] = "Manuelle Prämie erfolgreich vergeben.";
@@ -253,7 +253,7 @@ switch ($action) {
         break;
 
     case 'manual_bonus':
-        if ($_SESSION['role_id'] == Role::IT_MANAGER) {
+        if (in_array($_SESSION['role_id'], [Role::IT_MANAGER, Role::PROJECT_MANAGER])) {
             $allUsers = User::getAllActive();
             require_once __DIR__ . '/../views/manual_bonus.php';
         } else {

@@ -8,7 +8,7 @@ $isITManager = ($_SESSION['role_id'] == Role::IT_MANAGER);
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
             <div>
                 <?php if ($isITManager): ?>
-                    <h2 class="text-primary mb-1 text-uppercase fw-bold">Importierte Projekte</h2>
+                    <h2 class="text-primary mb-1 text-uppercase fw-bold">Projektübersicht</h2>
                     <span class="text-muted small">Hier siehst du alle Projekte, die aus ClickUp synchronisiert
                         wurden.</span>
                 <?php else: ?>

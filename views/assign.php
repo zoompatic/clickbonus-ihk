@@ -19,6 +19,7 @@
                     <div class="card shadow-sm border-top border-success border-4 h-100">
                         <div class="card-body">
                             <h3 class="h5 mb-3 text-uppercase fw-bold text-muted border-bottom pb-2">Mitarbeiter zuweisen</h3>
+                            Es muss mindestend ein Projektleiter zugewiesen werden. Weitere Mitarbeiter können jederzeit hinzugefügt oder entfernt werden. <br><br>
                             <form method="POST" action="?action=assign_user">
                                 <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                                 <input type="hidden" name="project_id" value="<?php echo $project['id']; ?>">

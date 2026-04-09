@@ -59,8 +59,14 @@
                                     </span>
                                 </td>
                                 <td class="small">
-                                    <?php if ($log['comment']): ?>
-                                        <span class="fst-italic"><?php echo htmlspecialchars($log['comment']); ?></span>
+                                    <?php
+                                        $displayComment = $log['comment'];
+                                        if ($log['approval_status_id'] == 1 && $log['comment'] === 'Prämie beantragt' && !empty($log['bonus_comment'])) {
+                                            $displayComment = $log['bonus_comment'];
+                                        }
+                                    ?>
+                                    <?php if ($displayComment): ?>
+                                        <span class="fst-italic"><?php echo htmlspecialchars($displayComment); ?></span>
                                     <?php else: ?>
                                         <span class="text-muted">-</span>
                                     <?php endif; ?>

@@ -65,8 +65,11 @@ use App\Models\Role;
                             <li class="nav-item"><a class="nav-link px-3" href="?action=hr_list">HR-Liste</a></li>
                         <?php endif; ?>
 
-                        <?php if ($roleId === Role::IT_MANAGER): ?>
+                        <?php if (in_array($roleId, [Role::IT_MANAGER, Role::PROJECT_MANAGER])): ?>
                             <li class="nav-item text-nowrap"><a class="nav-link px-3" href="?action=manual_bonus">Freie Prämie</a></li>
+                        <?php endif; ?>
+
+                        <?php if ($roleId === Role::IT_MANAGER): ?>
                             <li class="nav-item"><a class="nav-link px-3" href="?action=history">Historie</a></li>
                             <li class="nav-item text-nowrap"><a class="nav-link px-3" href="?action=users">Benutzer</a></li>
                         <?php endif; ?>
