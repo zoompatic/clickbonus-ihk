@@ -12,8 +12,11 @@ class Bonus
     public static function create($assignmentId, $amount, $comment, $creatorUserId)
     {
         $database = Database::getConnection();
+        $isManagedTransaction = !$database->inTransaction();
         try {
-            $database->beginTransaction();
+            if ($isManagedTransaction) {
+                $database->beginTransaction();
+            }
 
             $statement = $database->prepare("INSERT INTO bonuses (project_assignment_id, amount, comment, created_by) VALUES (?, ?, ?, ?)");
             $statement->execute([$assignmentId, $amount, $comment, $creatorUserId]);
@@ -22,12 +25,16 @@ class Bonus
             $approvalStatement = $database->prepare("INSERT INTO approvals (bonus_id, user_id, approval_status_id, comment) VALUES (?, ?, ?, ?)");
             $approvalStatement->execute([$bonusId, $creatorUserId, Status::PENDING, $comment]);
 
-            $database->commit();
+            if ($isManagedTransaction) {
+                $database->commit();
+            }
             return true;
         }
         catch (\Exception $error) {
-            $database->rollBack();
-            error_log("Fehler beim Erstellen der Prämie: " . $error->getMessage());
+            if ($isManagedTransaction && $database->inTransaction()) {
+                $database->rollBack();
+            }
+            error_log("Fehler beim Erstellen der Pr├ñmie: " . $error->getMessage());
             return false;
         }
     }
@@ -35,8 +42,11 @@ class Bonus
     public static function createManual($targetUserId, $amount, $comment, $creatorUserId)
     {
         $database = Database::getConnection();
+        $isManagedTransaction = !$database->inTransaction();
         try {
-            $database->beginTransaction();
+            if ($isManagedTransaction) {
+                $database->beginTransaction();
+            }
 
             $statement = $database->prepare("INSERT INTO bonuses (target_user_id, amount, comment, created_by) VALUES (?, ?, ?, ?)");
             $statement->execute([$targetUserId, $amount, $comment, $creatorUserId]);
@@ -45,12 +55,16 @@ class Bonus
             $approvalStatement = $database->prepare("INSERT INTO approvals (bonus_id, user_id, approval_status_id, comment) VALUES (?, ?, ?, ?)");
             $approvalStatement->execute([$bonusId, $creatorUserId, Status::PENDING, $comment]);
 
-            $database->commit();
+            if ($isManagedTransaction) {
+                $database->commit();
+            }
             return true;
         }
         catch (\Exception $error) {
-            $database->rollBack();
-            error_log("Fehler beim Erstellen der manuellen Prämie: " . $error->getMessage());
+            if ($isManagedTransaction && $database->inTransaction()) {
+                $database->rollBack();
+            }
+            error_log("Fehler beim Erstellen der manuellen Pr├ñmie: " . $error->getMessage());
             return false;
         }
     }
